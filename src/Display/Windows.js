@@ -1,39 +1,7 @@
 import React from "react";
 import Bloc from "./Bloc";
 
-const initialState = {
-  click: false, // To handle when the user click
-  nbR: 15, // Number of rows
-  nbC: 20, // Number of columns
-  size: 50, // Size of the blocs
-  cells: [] // represent the board. Matrix of int
-};
-
 export default class Windows extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      ...initialState,
-      cells: this.initCells(initialState.nbR, initialState.nbC) // Current states of the board
-    };
-  }
-
-  initCells(nbRows, nbColumns) {
-    // Init all the cells at 0
-    let matrix = [];
-    let tmpRow = [];
-
-    for (let r = 0; r < nbRows; r++) {
-      tmpRow = [];
-      for (let c = 0; c < nbColumns; c++) {
-        tmpRow.push(0);
-      }
-      matrix.push(tmpRow);
-    }
-    return matrix;
-  }
-
   componentDidMount() {
     // When the component mount, add event on click
     // Handle when the user click outside the blocs
@@ -49,12 +17,11 @@ export default class Windows extends React.Component {
   handleStateChange = (x, y) => {
     // Function is call by the children
     // If the user is clicking, change the value of the calling bloc
-    if (this.state.click) {
-      let nextState = this.state;
+    let currentState = this.props.getState();
 
-      nextState.cells[y][x] = nextState.cells[y][x] === 0 ? 1 : 0;
-
-      this.setState(nextState);
+    if (currentState.click) {
+      currentState.cells[y][x] = currentState.cells[y][x] === 0 ? 1 : 0;
+      this.props.setValues(currentState);
     }
   };
 
@@ -67,21 +34,18 @@ export default class Windows extends React.Component {
     clickEvent.stopPropagation();
     clickEvent.nativeEvent.stopImmediatePropagation();
 
-    let nextState = this.state;
+    let nextState = this.props.getState();
 
     nextState.click = !nextState.click;
     if (nextState.click) {
       // We need to change the current value of the bloc
       this.handleStateChange(x, y);
     }
-
-    this.setState(nextState);
+    this.props.setValues(nextState);
   };
 
   handleClic = () => {
     // Handle is the user is clicking outside the blocs
-    console.log("CLIQUE");
-
     let nextState = this.state;
 
     nextState.click = !nextState.click;
@@ -91,7 +55,7 @@ export default class Windows extends React.Component {
 
   displayBlocs() {
     // return the board to display
-    return this.state.cells.map((arrayRow, indR) => (
+    return this.props.getState().cells.map((arrayRow, indR) => (
       // Iterate over a row
       <div className="row nogutters" key={`R${indR}`}>
         {arrayRow.map((value, indC) => {
