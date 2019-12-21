@@ -8,6 +8,7 @@ export class Automate {
   }
 
   getMatrix() {
+    // Return the current matrix of the state of cells
     return this.matrix;
   }
 
@@ -23,7 +24,8 @@ export class Automate {
     };
 
     for (let r = 0; r < this.nbR; r++) {
-      tmpR = [];
+      // Iterate over the board, on apply rules on each cell
+      tmpR = []; // Next row of the matrix
       position.y = r;
 
       for (let c = 0; c < this.nbC; c++) {
@@ -33,6 +35,8 @@ export class Automate {
 
       nMatrix.push(tmpR);
     }
+
+    this.matrix = nMatrix;
 
     return nMatrix;
   }
@@ -50,6 +54,7 @@ export class Automate {
     // vToCheck is the state of the neighbour to check
     const { x, y } = position;
 
+    // Values to iterate (ie Neighboors)
     const startRow = this.start(y);
     const endRow = this.end(y, this.nbR);
 
@@ -59,11 +64,12 @@ export class Automate {
     let compt = 0;
 
     for (let r = startRow; r <= endRow; r++) {
+      // Iterate over the neighboors
       for (let c = startCol; c <= endCol; c++) {
         if (r !== y || c !== x) {
           // We don't count the cell itself
           if (this.matrix[r][c] === vToCheck) {
-            // Count the living cells
+            // Count the state of the cell
             compt += 1;
           }
         }

@@ -3,9 +3,9 @@ import CellularGame from "./Logic/CellularGame";
 
 function App() {
   return (
-    <div>
+    <main className="container">
       <CellularGame />
-    </div>
+    </main>
   );
 }
 

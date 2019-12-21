@@ -1,12 +1,15 @@
 import React from "react";
+
 import { TYPE_SIMULATION } from "../constantes/Constantes";
 
 export default class Controls extends React.Component {
   displayOptions() {
+    // Display the differents options to simulate
     return TYPE_SIMULATION.map(el => <option key={el}>{el}</option>);
   }
 
   updateValue = (event, stateTarget) => {
+    // update the state
     let nextState = this.props.getState();
     const value = event.target.value;
 
@@ -19,7 +22,9 @@ export default class Controls extends React.Component {
     const { speed, type } = this.props.getState();
 
     return (
-      <form>
+      <form
+        onSubmit={e => e.preventDefault()} // Avoid the submit when click on button
+      >
         <div className="form-group">
           <label>Type d'automate</label>
           <select
@@ -46,9 +51,9 @@ export default class Controls extends React.Component {
             }}
           />
         </div>
-        <button>Play</button>
-        <button>Step</button>
-        <button>Pause</button>
+
+        <button onClick={() => this.props.step()}>Step</button>
+        <button onClick={() => this.props.init()}>Init</button>
       </form>
     );
   }
