@@ -16,7 +16,7 @@ const INIT_WINDOWS = {
   click: false, // To handle when the user click
   nbR: 20, // Number of rows
   nbC: 25, // Number of columns
-  size: 20, // Size of the blocs
+  size: 40, // Size of the blocs
   cells: [] // represent the board. Matrix of int
 };
 

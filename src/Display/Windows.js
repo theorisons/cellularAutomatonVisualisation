@@ -29,7 +29,9 @@ export default class Windows extends React.Component {
 
   displayBlocs() {
     // return the board to display
-    return this.props.getState().cells.map((arrayRow, indR) => (
+    const currentState = this.props.getState();
+
+    return currentState.cells.map((arrayRow, indR) => (
       // Iterate over a row
       <div className="row nogutters" key={`R${indR}`}>
         {arrayRow.map((value, indC) => {
@@ -41,6 +43,7 @@ export default class Windows extends React.Component {
               value={value}
               handleClic={this.handleUserClicInsideBloc}
               handleEnter={this.handleStateChange}
+              dimension={currentState.size}
             />
           );
         })}

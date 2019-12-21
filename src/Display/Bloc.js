@@ -16,6 +16,10 @@ export default class Bloc extends React.Component {
 
   render() {
     const { x, y } = this.props.position;
+    const dimension = this.props.dimension;
+
+    console.log(dimension);
+
     // console.log(`Render x:${x} y:${y} v:${this.props.value}`);
     return (
       <div
@@ -24,6 +28,7 @@ export default class Bloc extends React.Component {
         // Give the event to strop the propagation
         onMouseEnter={() => this.props.handleEnter(x, y)} // If the mouse is inside a bloc
         className={"bloc " + this.createClass()}
+        style={{ height: `${dimension}px`, width: `${dimension}px` }}
       ></div>
     );
   }
