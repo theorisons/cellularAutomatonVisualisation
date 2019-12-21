@@ -1,10 +1,10 @@
 import React from "react";
-import Windows from "./Display/Windows";
+import CellularGame from "./Logic/CellularGame";
 
 function App() {
   return (
     <div>
-      <Windows />
+      <CellularGame />
     </div>
   );
 }

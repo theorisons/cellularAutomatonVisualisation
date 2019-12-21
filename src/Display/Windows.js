@@ -2,7 +2,7 @@ import React from "react";
 import Bloc from "./Bloc";
 
 const initialState = {
-  click: false, // To handle when the iser click
+  click: false, // To handle when the user click
   nbR: 15, // Number of rows
   nbC: 20, // Number of columns
   size: 50, // Size of the blocs
