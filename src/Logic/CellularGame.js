@@ -14,10 +14,14 @@ const INIT_CONTROLS = {
 const INIT_WINDOWS = {
   // Initial state of the windows section
   click: false, // To handle when the user click
+  cells: [] // represent the board. Matrix of int
+};
+
+const INIT_CORE = {
+  // Initial state of the core section (ie common to all sections)
   nbR: 20, // Number of rows
   nbC: 25, // Number of columns
-  size: 40, // Size of the blocs
-  cells: [] // represent the board. Matrix of int
+  size: 30 // Size of the blocs
 };
 
 const initCells = (nbRows, nbColumns) => {
@@ -49,10 +53,43 @@ export default class CellularGame extends React.Component {
       },
       windows: {
         ...INIT_WINDOWS,
-        cells: initCells(INIT_WINDOWS.nbR, INIT_WINDOWS.nbC) // Init an empty board
+        cells: initCells(INIT_CORE.nbR, INIT_CORE.nbC) // Init an empty board
+      },
+      core: {
+        ...INIT_CORE
+      },
+      test: {
+        w: 0,
+        h: 0
       }
     };
   }
+
+  componentDidMount() {
+    // When the component mount, add event on resize
+    // Handle when the user resize its windows
+    window.addEventListener("resize", this.handleResize);
+  }
+
+  componentWillUnmount() {
+    // Remove all events in the event manager of the component.
+    window.removeEventListener("resize", this.handleResize);
+  }
+
+  handleResize = () => {
+    // Handle when the user resize its windows
+    // Change the size of the blocs
+    // Change the number of blocs
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    let nState = this.state;
+    nState.test = {
+      w: w,
+      h: h
+    };
+    this.setState(nState);
+  };
 
   step = () => {
     // Compute the next state
@@ -69,6 +106,13 @@ export default class CellularGame extends React.Component {
     this.automate = new Conway(this.state.windows.cells);
   };
 
+  setStateCore = newCore => {
+    // Set the state of the core part
+    let nextState = this.state;
+    nextState.core = newCore;
+    this.setState(nextState);
+  };
+
   setStateWindows = newWindows => {
     // Set the state of the windows part
     let nextState = this.state;
@@ -81,6 +125,11 @@ export default class CellularGame extends React.Component {
     let nextState = this.state;
     nextState.controls = newControls;
     this.setState(nextState);
+  };
+
+  getCoreState = () => {
+    // Get the state of the core part
+    return this.state.core;
   };
 
   getStateWindows = () => {
@@ -97,15 +146,30 @@ export default class CellularGame extends React.Component {
     return (
       <div>
         <h1>Automate Cellulaire</h1>
+        <h2>
+          {this.state.test.w} x {this.state.test.h}
+        </h2>
 
         <Windows
-          getState={this.getStateWindows}
-          setValues={this.setStateWindows}
+          specific={{
+            get: this.getStateWindows,
+            set: this.setStateWindows
+          }}
+          core={{
+            set: this.setStateCore,
+            get: this.getCoreState
+          }}
         />
 
         <Controls
-          getState={this.getStateControls}
-          setValues={this.setStateControls}
+          specific={{
+            get: this.getStateControls,
+            set: this.setStateControls
+          }}
+          core={{
+            set: this.setStateCore,
+            get: this.getCoreState
+          }}
           step={this.step}
           init={this.init}
         />

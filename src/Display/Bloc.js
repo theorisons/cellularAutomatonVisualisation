@@ -15,20 +15,21 @@ export default class Bloc extends React.Component {
   }
 
   render() {
-    const { x, y } = this.props.position;
-    const dimension = this.props.dimension;
+    const { x, y } = this.props.position; // Coordinates of the bloc. Info to send to the parent
+    const size = this.props.size; // Dimension of the bloc to display
 
-    console.log(dimension);
+    const styles = {
+      height: `${size}px`,
+      width: `${size}px`
+    }; // Size of the bloc
 
-    // console.log(`Render x:${x} y:${y} v:${this.props.value}`);
     return (
       <div
         // When events are detected, call the parent function
-        onClick={event => this.props.handleClic(x, y, event)} // Event for click -> set the change
-        // Give the event to strop the propagation
+        onClick={() => this.props.handleClic(x, y)} // Event for click -> set the change
         onMouseEnter={() => this.props.handleEnter(x, y)} // If the mouse is inside a bloc
-        className={"bloc " + this.createClass()}
-        style={{ height: `${dimension}px`, width: `${dimension}px` }}
+        className={"bloc " + this.createClass()} // Class of bloc + active or not
+        style={styles}
       ></div>
     );
   }

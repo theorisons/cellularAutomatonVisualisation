@@ -5,35 +5,39 @@ export default class Windows extends React.Component {
   handleStateChange = (x, y) => {
     // Function call by the children
     // If the user is clicking, change the value of the calling bloc
-    let currentState = this.props.getState();
+    let currentState = this.props.specific.get();
 
     if (currentState.click) {
       currentState.cells[y][x] = currentState.cells[y][x] === 0 ? 1 : 0; // Change the cell status
-      this.props.setValues(currentState);
+      this.props.specific.set(currentState);
     }
   };
 
-  handleUserClicInsideBloc = (x, y, clickEvent) => {
+  handleUserClicInsideBloc = (x, y) => {
     // Function call by the children
     // Handle is the user is clicking inside a bloc
 
-    let nextState = this.props.getState();
+    let nextState = this.props.specific.get();
 
     nextState.click = !nextState.click;
     if (nextState.click) {
       // We need to change the current value of the bloc
       this.handleStateChange(x, y);
     }
-    this.props.setValues(nextState);
+    this.props.specific.set(nextState);
   };
 
   displayBlocs() {
     // return the board to display
-    const currentState = this.props.getState();
+    const { cells } = this.props.specific.get();
+    const { size } = this.props.core.get();
 
-    return currentState.cells.map((arrayRow, indR) => (
+    return cells.map((arrayRow, indR) => (
       // Iterate over a row
-      <div className="row nogutters" key={`R${indR}`}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        key={`R${indR}`}
+      >
         {arrayRow.map((value, indC) => {
           // Iterate over the state of the cells
           return (
@@ -43,7 +47,7 @@ export default class Windows extends React.Component {
               value={value}
               handleClic={this.handleUserClicInsideBloc}
               handleEnter={this.handleStateChange}
-              dimension={currentState.size}
+              size={size}
             />
           );
         })}

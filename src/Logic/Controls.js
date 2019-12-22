@@ -10,21 +10,41 @@ export default class Controls extends React.Component {
 
   updateValue = (event, stateTarget) => {
     // update the state
-    let nextState = this.props.getState();
+    let nextState = this.props.specific.get();
     const value = event.target.value;
 
     nextState[stateTarget] = value;
 
-    this.props.setValues(nextState);
+    this.props.specific.set(nextState);
   };
 
   render() {
-    const { speed, type } = this.props.getState();
+    const { speed, type } = this.props.specific.get();
+    const { size } = this.props.core.get();
 
     return (
       <form
         onSubmit={e => e.preventDefault()} // Avoid the submit when click on button
       >
+        <div className="form-group">
+          <label>Taille {size}</label>
+          <input
+            className="form-control-range"
+            type="range"
+            value={size}
+            min="10"
+            max="50"
+            step="5"
+            onChange={event => {
+              let nextState = this.props.core.get();
+              const value = event.target.value;
+
+              nextState.size = value;
+
+              this.props.core.set(nextState);
+            }}
+          />
+        </div>
         <div className="form-group">
           <label>Type d'automate</label>
           <select

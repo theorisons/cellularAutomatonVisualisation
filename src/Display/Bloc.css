@@ -1,6 +1,5 @@
 .bloc {
   border: 2px solid black;
-
   transition: background-color 0.4s;
 }
 
