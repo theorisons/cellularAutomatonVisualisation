@@ -3,6 +3,34 @@
   transition: background-color 0.1s;
 }
 
-.active {
-  background-color: blue;
+.active0 {
+  background-color: rgb(255, 255, 255);
+}
+
+.active1 {
+  background-color: rgb(255, 255, 0);
+}
+
+.active2 {
+  background-color: rgb(255, 0, 255);
+}
+
+.active3 {
+  background-color: rgb(255, 0, 0);
+}
+
+.active4 {
+  background-color: rgb(0, 255, 255);
+}
+
+.active5 {
+  background-color: rgb(0, 255, 0);
+}
+
+.active6 {
+  background-color: rgb(0, 0, 255);
+}
+
+.active7 {
+  background-color: rgb(0, 0, 0);
 }

@@ -46,31 +46,19 @@ export default class Controls extends React.Component {
         onSubmit={e => e.preventDefault()} // Avoid the submit when click on button
       >
         <div className="form-group">
-          <label>Taille {size}</label>
+          <label>Taille: {size}</label>
           <input
             className="form-control-range"
             type="range"
             value={size}
             min="10"
-            max="50"
+            max="100"
             step="5"
             onChange={event => this.updateValuesCore(event, "size")}
           />
         </div>
         <div className="form-group">
-          <label>NB C {nbC}</label>
-          <input
-            className="form-control-range"
-            type="range"
-            value={nbC}
-            min="1"
-            max="40"
-            step="1"
-            onChange={event => this.updateValuesCore(event, "nbC")}
-          />
-        </div>
-        <div className="form-group">
-          <label>nb R {nbR}</label>
+          <label>Nombres de lignes: {nbR}</label>
           <input
             className="form-control-range"
             type="range"
@@ -79,6 +67,18 @@ export default class Controls extends React.Component {
             max="40"
             step="1"
             onChange={event => this.updateValuesCore(event, "nbR")}
+          />
+        </div>
+        <div className="form-group">
+          <label>Nombres de colonnes: {nbC}</label>
+          <input
+            className="form-control-range"
+            type="range"
+            value={nbC}
+            min="1"
+            max="40"
+            step="1"
+            onChange={event => this.updateValuesCore(event, "nbC")}
           />
         </div>
         <div className="form-group">

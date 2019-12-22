@@ -4,6 +4,7 @@ import Windows from "../Display/Windows";
 
 import { Conway } from "./Algo/Conway";
 import { TYPE_SIMULATION } from "../constantes/Constantes";
+import { Schelling } from "./Algo/Schelling";
 
 const INIT_CONTROLS = {
   // Initial state of the controls section
@@ -20,8 +21,8 @@ const INIT_WINDOWS = {
 
 const INIT_CORE = {
   // Initial state of the core section (ie common to all sections)
-  nbR: 5, // Number of rows
-  nbC: 5, // Number of columns
+  nbR: 3, // Number of rows
+  nbC: 3, // Number of columns
   size: 30 // Size of the blocs
 };
 
@@ -55,7 +56,12 @@ export default class CellularGame extends React.Component {
       },
       windows: {
         ...INIT_WINDOWS,
-        cells: initCells(INIT_CORE.nbR, INIT_CORE.nbC) // Init an empty board
+        // cells: initCells(INIT_CORE.nbR, INIT_CORE.nbC) // Init an empty board
+        cells: [
+          [0, 1, 2],
+          [3, 4, 5],
+          [6, 7, 8]
+        ]
       },
       core: {
         ...INIT_CORE
@@ -152,6 +158,10 @@ export default class CellularGame extends React.Component {
       case "Conway":
         this.automaton = new Conway(this.state.windows.cells);
         break;
+      case "Schelling":
+        console.log("init schelling");
+        this.automaton = new Schelling(this.state.windows.cells);
+        break;
       default:
         console.error("Error in the Automaton selection");
         break;
@@ -241,6 +251,7 @@ export default class CellularGame extends React.Component {
   };
 
   render() {
+    console.log(this.state);
     return (
       <div>
         <h1>Automate Cellulaire</h1>

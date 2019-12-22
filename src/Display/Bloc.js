@@ -4,13 +4,12 @@ import "./Bloc.css";
 export default class Bloc extends React.Component {
   createClass() {
     // Change the class of the bloc
-    switch (this.props.value) {
-      case 0:
-        return "";
-      case 1:
-        return "active";
-      default:
-        return "";
+    const value = this.props.value;
+    if (0 <= value && value <= 7) {
+      // Only 8 colors are set in the CSS
+      return `active${value}`;
+    } else {
+      console.error("Error in the value of the cell");
     }
   }
 
