@@ -7,8 +7,9 @@ import { TYPE_SIMULATION } from "../constantes/Constantes";
 
 const INIT_CONTROLS = {
   // Initial state of the controls section
-  speed: 0.5,
-  type: TYPE_SIMULATION[0]
+  speed: 500, // Speed of the animation in ms
+  type: TYPE_SIMULATION[0], // Type of the simulation (ie automaton)
+  play: false // true is the animation is set to play
 };
 
 const INIT_WINDOWS = {
@@ -45,7 +46,8 @@ export default class CellularGame extends React.Component {
   constructor(props) {
     super(props);
 
-    this.automate = null;
+    this.automaton = null; // Contains the logic of the simulation
+    this.animation = null; // Use to animate the simulation
 
     this.state = {
       controls: {
@@ -91,24 +93,83 @@ export default class CellularGame extends React.Component {
     this.setState(nState);
   };
 
-  stepAutomate = () => {
+  stopAnimation = () => {
+    // Stop the animation of the simulation
+    if (this.animation !== null) {
+      // the animation is set
+      clearInterval(this.animation);
+      this.animation = null;
+    }
+  };
+
+  startAnimation = () => {
+    // Start the animation of the simulation
+    this.animation = setInterval(this.stepAutomaton, this.state.controls.speed);
+  };
+
+  changeValueAnimation = () => {
+    // Use when the user change the value of animation will the animation is playing
+    if (this.animation !== null) {
+      // The animation is currently play
+      this.stopAnimation();
+      this.startAnimation();
+    }
+  };
+
+  handlePlayPause = () => {
+    // Call by controls when the user hit the play/pause button
+    if (this.animation === null) {
+      // Create a new animation at a specific speed
+      this.startAnimation();
+    } else {
+      // The user wants to stop the animation
+      this.stopAnimation();
+    }
+
+    let newState = this.state;
+    newState.controls.play = !newState.controls.play;
+    this.setState(newState);
+  };
+
+  stepAutomaton = () => {
     // Compute the next state
-    if (this.automate === null) {
-      // If it's the first time, init the automate
-      this.initAutomate();
+    if (this.automaton === null) {
+      // If it's the first time, init the automaton
+      this.initAutomaton();
     }
 
     let nextStateWindows = this.getStateWindows();
-    nextStateWindows.cells = this.automate.next(); // Compute the next state of the cells
+    nextStateWindows.cells = this.automaton.next(); // Compute the next state of the cells
 
     this.setStateWindows(nextStateWindows);
   };
 
-  initAutomate = () => {
-    // Init the automate
+  initAutomaton = () => {
+    // Init the automaton
     // Init once even if the matrix change
-    // The matrix use by the Automate is a reference to the cells in the state
-    this.automate = new Conway(this.state.windows.cells);
+    // The matrix use by the Automaton is a reference to the cells in the state
+    switch (this.state.controls.type) {
+      case "Conway":
+        this.automaton = new Conway(this.state.windows.cells);
+        break;
+      default:
+        console.error("Error in the Automaton selection");
+        break;
+    }
+  };
+
+  resetAutomaton = () => {
+    // Reset the automaton.
+    this.automaton = null;
+  };
+
+  clearCells = () => {
+    let newState = this.state;
+    const newMatrix = initCells(newState.core.nbR, newState.core.nbC);
+    newState.windows.cells = newMatrix;
+    this.automaton = null; // Clear the previous automaton because dimensions have changed
+
+    this.setState(newState);
   };
 
   resizeCells = (nbR, nbC) => {
@@ -144,7 +205,7 @@ export default class CellularGame extends React.Component {
       nextState.core.nbC
     ); // Init an empty board
 
-    this.automate = null; // Clear the previous automate because dimensions have changed
+    this.automaton = null; // Clear the previous automaton because dimensions could be differents
 
     this.setState(nextState);
   };
@@ -160,7 +221,8 @@ export default class CellularGame extends React.Component {
     // Set the state of the controls part
     let nextState = this.state;
     nextState.controls = newControls;
-    this.setState(nextState);
+    this.setState(nextState, this.changeValueAnimation()); // Call back of the animation function
+    // Change the speed of the animation if the speed has change
   };
 
   getCoreState = () => {
@@ -206,7 +268,9 @@ export default class CellularGame extends React.Component {
             set: this.setStateCore,
             get: this.getCoreState
           }}
-          step={this.stepAutomate}
+          step={this.stepAutomaton}
+          clear={this.clearCells}
+          play={this.handlePlayPause}
         />
       </div>
     );

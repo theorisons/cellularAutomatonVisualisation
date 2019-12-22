@@ -1,6 +1,6 @@
-import { Automate } from "./Automate";
+import { Automaton } from "./Automaton";
 
-export class Conway extends Automate {
+export class Conway extends Automaton {
   constructor(matrix) {
     super(matrix);
   }

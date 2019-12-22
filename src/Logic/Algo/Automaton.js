@@ -1,4 +1,4 @@
-export class Automate {
+export class Automaton {
   constructor(matrix) {
     // Init the object with the board
     // All the cells status
