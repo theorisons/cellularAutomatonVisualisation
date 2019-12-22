@@ -99,8 +99,6 @@ export default class CellularGame extends React.Component {
     let nextStateWindows = this.getStateWindows();
     nextStateWindows.cells = this.automate.next();
 
-    nextStateWindows.bob = Math.random();
-
     this.setStateWindows(nextStateWindows);
   };
 

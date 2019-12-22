@@ -24,10 +24,9 @@ export default class Controls extends React.Component {
     const value = event.target.value;
 
     nextState[stateTarget] = value;
+
     nextState.nbC += 5;
     nextState.nbR += 5;
-
-    console.log(nextState);
 
     this.props.core.set(nextState);
   };
