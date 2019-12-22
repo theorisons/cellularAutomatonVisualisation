@@ -19,8 +19,8 @@ const INIT_WINDOWS = {
 
 const INIT_CORE = {
   // Initial state of the core section (ie common to all sections)
-  nbR: 20, // Number of rows
-  nbC: 25, // Number of columns
+  nbR: 5, // Number of rows
+  nbC: 5, // Number of columns
   size: 30 // Size of the blocs
 };
 
@@ -94,10 +94,12 @@ export default class CellularGame extends React.Component {
   stepAutomate = () => {
     // Compute the next state
     if (this.automate === null) {
+      // If it's the first time, init the automate
       this.initAutomate();
     }
+
     let nextStateWindows = this.getStateWindows();
-    nextStateWindows.cells = this.automate.next();
+    nextStateWindows.cells = this.automate.next(); // Compute the next state of the cells
 
     this.setStateWindows(nextStateWindows);
   };
@@ -141,6 +143,9 @@ export default class CellularGame extends React.Component {
       nextState.core.nbR,
       nextState.core.nbC
     ); // Init an empty board
+
+    this.automate = null; // Clear the previous automate because dimensions have changed
+
     this.setState(nextState);
   };
 
