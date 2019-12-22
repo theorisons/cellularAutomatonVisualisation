@@ -91,8 +91,11 @@ export default class CellularGame extends React.Component {
     this.setState(nState);
   };
 
-  step = () => {
+  stepAutomate = () => {
     // Compute the next state
+    if (this.automate === null) {
+      this.initAutomate();
+    }
     let nextStateWindows = this.getStateWindows();
     nextStateWindows.cells = this.automate.next();
 
@@ -101,15 +104,45 @@ export default class CellularGame extends React.Component {
     this.setStateWindows(nextStateWindows);
   };
 
-  init = () => {
+  initAutomate = () => {
     // Init the automate
+    // Init once even if the matrix change
+    // The matrix use by the Automate is a reference to the cells in the state
     this.automate = new Conway(this.state.windows.cells);
+  };
+
+  resizeCells = (nbR, nbC) => {
+    // Return the matrix resize
+    // Keep as much values as possible
+    // Resize on top left corner
+    let newMatrix = [];
+    let tmpRow = [];
+
+    const oldMatrix = this.state.windows.cells;
+
+    for (let r = 0; r < nbR; r++) {
+      tmpRow = [];
+      for (let c = 0; c < nbC; c++) {
+        if (c < oldMatrix[0].length && r < oldMatrix.length) {
+          tmpRow.push(oldMatrix[r][c]);
+        } else {
+          tmpRow.push(0);
+        }
+      }
+      newMatrix.push(tmpRow);
+    }
+    return newMatrix;
   };
 
   setStateCore = newCore => {
     // Set the state of the core part
     let nextState = this.state;
     nextState.core = newCore;
+
+    nextState.windows.cells = this.resizeCells(
+      nextState.core.nbR,
+      nextState.core.nbC
+    ); // Init an empty board
     this.setState(nextState);
   };
 
@@ -170,8 +203,7 @@ export default class CellularGame extends React.Component {
             set: this.setStateCore,
             get: this.getCoreState
           }}
-          step={this.step}
-          init={this.init}
+          step={this.stepAutomate}
         />
       </div>
     );

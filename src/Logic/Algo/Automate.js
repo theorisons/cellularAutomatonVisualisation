@@ -2,7 +2,8 @@ export class Automate {
   constructor(matrix) {
     // Init the object with the board
     // All the cells status
-    this.matrix = matrix;
+
+    this.matrix = matrix; // Matrix is use as reference
     this.nbR = this.matrix.length;
     this.nbC = this.matrix[0].length;
   }
@@ -75,6 +76,24 @@ export class Automate {
         }
       }
     }
+
+    // Spherical Matrix
+    // let compt = 0;
+
+    // for (let r = -1; r <= 1; r++) {
+    //   // Iterate over the neighboors
+    //   for (let c = -1; c <= 1; c++) {
+    //     if (r !== 0 || c !== 0) {
+    //       // We don't count the cell itself
+    //       const xC = (x + this.nbC + c) % this.nbC;
+    //       const yC = (y + this.nbR + r) % this.nbR;
+    //       if (this.matrix[yC][xC] === vToCheck) {
+    //         // Count the state of the cell
+    //         compt += 1;
+    //       }
+    //     }
+    //   }
+    // }
 
     return compt;
   }
