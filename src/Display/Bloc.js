@@ -1,7 +1,7 @@
 import React from "react";
 import "./Bloc.css";
 
-import { NB_COLORS } from "../constantes/Constantes";
+import { NB_COLORS } from "../constantes/constantes";
 
 export default class Bloc extends React.Component {
   createClass() {
@@ -16,7 +16,7 @@ export default class Bloc extends React.Component {
   }
 
   render() {
-    const { x, y } = this.props.position; // Coordinates of the bloc. Info to send to the parent
+    const { indR, indC } = this.props.position; // Coordinates of the bloc. Info to send to the parent
     const size = this.props.size; // Dimension of the bloc to display
 
     const styles = {
@@ -27,8 +27,8 @@ export default class Bloc extends React.Component {
     return (
       <div
         // When events are detected, call the parent function
-        onClick={() => this.props.handleClic(x, y)} // Event for click -> set the change
-        onMouseEnter={() => this.props.handleEnter(x, y)} // If the mouse is inside a bloc
+        onClick={() => this.props.handleClic(indR, indC)} // Event for click -> set the change
+        onMouseEnter={() => this.props.handleEnter(indR, indC)} // If the mouse is inside a bloc
         className={"bloc " + this.createClass()} // Class of bloc + active or not
         style={styles}
       ></div>

@@ -7,24 +7,28 @@ export class Schelling extends Automaton {
     super(matrix, 8);
   }
 
-  changeValue(x, y) {
-    // x and y are the coordinates of the cell to check
+  changeValue(indR, indC) {
+    // (indC, indR) are the coordinates of the cell
+    // indR -> value of the row
+    // indC -> value of the column
     // Return the value to put in the matrix
     // Circular value based on the number of states
 
-    return (this.matrix[y][x] + 1) % this.nbStates;
+    return (this.matrix[indR][indC] + 1) % this.nbStates;
   }
 
-  rules(x, y) {
-    // x and y are the coordinates of the cell to check
+  rules(indR, indC) {
+    // (indC, indR) are the coordinates of the cell
+    // indR -> value of the row
+    // indC -> value of the column
     // Return the next state of the cell
-    const currentState = this.matrix[y][x];
+    const currentState = this.matrix[indR][indC];
     const stateToCheck = (currentState + 1) % MAX_STATES;
 
-    const neighbour = this.countNeighbours(x, y, currentState); // Count the cells alive
+    const neighbour = this.countNeighbours(indR, indC, currentState); // Count the cells alive
 
     console.log(
-      `x ${x}, y ${y}, cS ${currentState}, sC ${stateToCheck}, n ${neighbour}`
+      `x ${indC}, y ${indR}, cS ${currentState}, sC ${stateToCheck}, n ${neighbour}`
     );
 
     if (neighbour >= 3) {

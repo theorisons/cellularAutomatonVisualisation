@@ -4,8 +4,8 @@ export class Automaton {
     // All the cells status
 
     this.matrix = matrix; // Matrix is use as reference
-    this.nbR = this.matrix.length;
-    this.nbC = this.matrix[0].length;
+    this.nbR = this.matrix.length; // Number of rows
+    this.nbC = this.matrix[0].length; // Number of columns
     this.nbStates = nbStates; // Nb of states in the simulation
   }
 
@@ -24,7 +24,7 @@ export class Automaton {
       tmpR = []; // Next row of the matrix
 
       for (let c = 0; c < this.nbC; c++) {
-        tmpR.push(this.rules(c, r)); // Calcul of the futur state of the cell
+        tmpR.push(this.rules(r, c)); // Calcul of the futur state of the cell
       }
 
       nMatrix.push(tmpR);
@@ -35,39 +35,43 @@ export class Automaton {
     return nMatrix;
   }
 
-  rules(x, y) {
-    // x and y are the coordinates of the cell to check
+  rules(indR, indC) {
+    // (indC, indR) are the coordinates of the cell
+    // indR -> value of the row
+    // indC -> value of the column
     // Define all the rules of the simulation
     // Kind of abstract method
     // Define in the children
     // Return the next state of the cell
   }
 
-  changeValue(x, y) {
-    // x and y are the coordinates of the cell to check
+  changeValue(indR, indC) {
+    // (indC, indR) are the coordinates of the cell
+    // indR -> value of the row
+    // indC -> value of the column
     // Define how to change the status of a cell
     // Kind of abstract method
     // Define in the children
     // Return the value to put in the matrix
   }
 
-  countNeighbours(x, y, vToCheck) {
-    // x and y are the coordinates of the cell to check
+  countNeighbours(indR, indC, vToCheck) {
+    // (indC, indR) are the coordinates of the cell
     // vToCheck is the state of the neighbour to check
 
     // Values to iterate (ie Neighboors)
-    const startRow = this.start(y);
-    const endRow = this.end(y, this.nbR);
+    const startRow = this.start(indR);
+    const endRow = this.end(indR, this.nbR);
 
-    const startCol = this.start(x);
-    const endCol = this.end(x, this.nbC);
+    const startCol = this.start(indC);
+    const endCol = this.end(indC, this.nbC);
 
     let compt = 0;
 
     for (let r = startRow; r <= endRow; r++) {
       // Iterate over the neighboors
       for (let c = startCol; c <= endCol; c++) {
-        if (r !== y || c !== x) {
+        if (r !== indR || c !== indC) {
           // We don't count the cell itself
           if (this.matrix[r][c] === vToCheck) {
             // Count the state of the cell

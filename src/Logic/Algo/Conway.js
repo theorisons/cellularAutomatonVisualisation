@@ -5,18 +5,22 @@ export class Conway extends Automaton {
     super(matrix, 2);
   }
 
-  changeValue(x, y) {
-    // x and y are the coordinates of the cell to check
+  changeValue(indR, indC) {
+    // (indC, indR) are the coordinates of the cell
+    // indR -> value of the row
+    // indC -> value of the column
     // Return the value to put in the matrix
     // Either dead 0 or alive 1
 
-    return (this.matrix[y][x] + 1) % this.nbStates;
+    return (this.matrix[indR][indC] + 1) % this.nbStates;
   }
 
-  rules(x, y) {
-    // x and y are the coordinates of the cell to check
+  rules(indR, indC) {
+    // (indC, indR) are the coordinates of the cell
+    // indR -> value of the row
+    // indC -> value of the column
     // Return the next state of the cell
-    const neighbour = this.countNeighbours(x, y, 1); // Count the cells alive
+    const neighbour = this.countNeighbours(indR, indC, 1); // Count the cells alive
 
     if (neighbour === 3) {
       // 3 neighbours, the cell live
@@ -24,7 +28,7 @@ export class Conway extends Automaton {
       return 1;
     } else if (neighbour === 2) {
       // stay in is current status
-      return this.matrix[y][x];
+      return this.matrix[indR][indC];
     } else {
       // die
       return 0;

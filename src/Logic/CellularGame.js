@@ -1,30 +1,23 @@
 import React from "react";
+
+/* React Component */
+
 import Controls from "./Controls";
 import Windows from "../Display/Windows";
 
+/* Automaton */
+
 import { Conway } from "./Algo/Conway";
 import { Schelling } from "./Algo/Schelling";
+
+/* Constantes */
+
 import {
   INIT_CONTROLS,
   INIT_CORE,
   INIT_WINDOWS
-} from "../constantes/Constantes";
-
-const initCells = (nbRows, nbColumns) => {
-  // Init all the cells at 0 in the matrix
-  let matrix = [];
-  let tmpRow = [];
-
-  for (let r = 0; r < nbRows; r++) {
-    // iterate over the rows and columns of the matrix
-    tmpRow = [];
-    for (let c = 0; c < nbColumns; c++) {
-      tmpRow.push(0); // set value to 0
-    }
-    matrix.push(tmpRow);
-  }
-  return matrix;
-};
+} from "../constantes/constantes";
+import { initCells } from "../constantes/utilities";
 
 export default class CellularGame extends React.Component {
   // CellularGame contains the state of the controls and Windows sections
@@ -36,9 +29,11 @@ export default class CellularGame extends React.Component {
 
     this.state = {
       controls: {
+        // State of the controls part
         ...INIT_CONTROLS
       },
       windows: {
+        // State of the windows part
         ...INIT_WINDOWS,
         cells: initCells(INIT_CORE.nbR, INIT_CORE.nbC) // Init an empty board
         // cells: [
@@ -49,14 +44,18 @@ export default class CellularGame extends React.Component {
         // ]
       },
       core: {
+        // Shared state
         ...INIT_CORE
       },
       test: {
+        // Test State
         w: 0,
         h: 0
       }
     };
   }
+
+  /* Life cycle component */
 
   componentDidMount() {
     // When the component mount, add event on resize
@@ -69,20 +68,7 @@ export default class CellularGame extends React.Component {
     window.removeEventListener("resize", this.handleResize);
   }
 
-  handleResize = () => {
-    // Handle when the user resize its windows
-    // Change the size of the blocs
-    // Change the number of blocs
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-
-    let nState = this.state;
-    nState.test = {
-      w: w,
-      h: h
-    };
-    this.setState(nState);
-  };
+  /* Animation part */
 
   stopAnimation = () => {
     // Stop the animation of the simulation
@@ -122,18 +108,7 @@ export default class CellularGame extends React.Component {
     this.setState(newState);
   };
 
-  stepAutomaton = () => {
-    // Compute the next state
-    if (this.automaton === null) {
-      // If it's the first time, init the automaton
-      this.initAutomaton();
-    }
-
-    let nextStateWindows = this.getStateWindows();
-    nextStateWindows.cells = this.automaton.next(); // Compute the next state of the cells
-
-    this.setStateWindows(nextStateWindows);
-  };
+  /* Automaton part */
 
   initAutomaton = () => {
     // Init the automaton
@@ -152,19 +127,66 @@ export default class CellularGame extends React.Component {
     }
   };
 
+  stepAutomaton = () => {
+    // Compute the next state
+    if (this.automaton === null) {
+      // If it's the first time, init the automaton
+      this.initAutomaton();
+    }
+
+    let nextStateWindows = this.getStateWindows();
+    nextStateWindows.cells = this.automaton.next(); // Compute the next state of the cells
+
+    this.setStateWindows(nextStateWindows);
+  };
+
   resetAutomaton = () => {
     // Reset the automaton.
     this.automaton = null;
   };
 
-  clearCells = () => {
-    let newState = this.state;
-    const newMatrix = initCells(newState.core.nbR, newState.core.nbC);
-    newState.windows.cells = newMatrix;
-    this.automaton = null; // Clear the previous automaton because dimensions have changed
-
-    this.setState(newState);
+  getValue = (indR, indC) => {
+    // Get the new value of the cell on click (or enter)
+    // indR -> value of the row
+    // indC -> value of the column
+    // (indC, indR) are the coordinates of the cell
+    this.initAutomaton(); // Make sure it is the right rules
+    return this.automaton.changeValue(indR, indC);
   };
+
+  changeValueCell = (indR, indC, stateWindows = null) => {
+    // Change the value of the cell and set the new state
+    // (indC, indR) are the coordinates of the cell
+    // indR -> value of the row
+    // indC -> value of the column
+    let newState = stateWindows;
+    if (newState === null) {
+      // If there is a modification is the state, avoid multiple set
+      newState = this.getStateWindows();
+    }
+
+    newState.cells[indR][indC] = this.getValue(indR, indC); // Change the value of the cell
+    this.setStateWindows(newState);
+  };
+
+  /* Handle the resize of the windows */
+
+  handleResize = () => {
+    // Handle when the user resize its windows
+    // Change the size of the blocs
+    // Change the number of blocs
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    let nState = this.state;
+    nState.test = {
+      w: w,
+      h: h
+    };
+    this.setState(nState);
+  };
+
+  /* Cells handling */
 
   resizeCells = (nbR, nbC) => {
     // Return the matrix resize
@@ -188,6 +210,17 @@ export default class CellularGame extends React.Component {
     }
     return newMatrix;
   };
+
+  clearCells = () => {
+    let newState = this.state;
+    const newMatrix = initCells(newState.core.nbR, newState.core.nbC);
+    newState.windows.cells = newMatrix;
+    this.automaton = null; // Clear the previous automaton because dimensions have changed
+
+    this.setState(newState);
+  };
+
+  /* Setter of the state */
 
   setStateCore = newCore => {
     // Set the state of the core part
@@ -219,6 +252,8 @@ export default class CellularGame extends React.Component {
     // Change the speed of the animation if the speed has change
   };
 
+  /* Getter of the state */
+
   getCoreState = () => {
     // Get the state of the core part
     return this.state.core;
@@ -234,23 +269,8 @@ export default class CellularGame extends React.Component {
     return this.state.controls;
   };
 
-  getValue = (x, y) => {
-    this.initAutomaton();
-    return this.automaton.changeValue(x, y);
-  };
-
-  changeValueCell = (x, y, stateWindows = null) => {
-    let newState = stateWindows;
-    if (newState === null) {
-      newState = this.getStateWindows();
-    }
-
-    newState.cells[y][x] = this.getValue(x, y);
-    this.setStateWindows(newState);
-  };
-
   render() {
-    console.log(this.state);
+    // console.log(this.state);
     return (
       <div>
         <h1>Automate Cellulaire</h1>

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { TYPE_SIMULATION } from "../constantes/Constantes";
+import { TYPE_SIMULATION } from "../constantes/constantes";
 
 export default class Controls extends React.Component {
   displayOptions() {
