@@ -14,6 +14,26 @@ export class Automaton {
     return this.matrix;
   }
 
+  randomMatrix() {
+    // Return a matrix with random state for the cell
+    let nMatrix = [];
+    let tmpR = [];
+
+    for (let r = 0; r < this.nbR; r++) {
+      // Iterate over the board
+      tmpR = []; // Next row of the matrix
+
+      for (let c = 0; c < this.nbC; c++) {
+        tmpR.push(Math.floor(Math.random() * Math.floor(this.nbStates))); // Randomized a state
+      }
+
+      nMatrix.push(tmpR);
+    }
+    this.matrix = nMatrix; // update the new matrix reference
+
+    return nMatrix;
+  }
+
   next() {
     // Compute the next state of the simulation
     let nMatrix = [];
@@ -30,7 +50,7 @@ export class Automaton {
       nMatrix.push(tmpR);
     }
 
-    this.matrix = nMatrix;
+    this.matrix = nMatrix; // update the new matrix reference
 
     return nMatrix;
   }

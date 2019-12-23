@@ -31,7 +31,9 @@ export default class Bloc extends React.Component {
         onMouseEnter={() => this.props.handleEnter(indR, indC)} // If the mouse is inside a bloc
         className={"bloc " + this.createClass()} // Class of bloc + active or not
         style={styles}
-      ></div>
+      >
+        {/* {this.props.value + 1} */}
+      </div>
     );
   }
 }

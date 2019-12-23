@@ -8,7 +8,7 @@ import Windows from "../Display/Windows";
 /* Automaton */
 
 import { Conway } from "./Algo/Conway";
-import { Schelling } from "./Algo/Schelling";
+import { Immigration } from "./Algo/Immigration";
 
 /* Constantes */
 
@@ -37,10 +37,14 @@ export default class CellularGame extends React.Component {
         ...INIT_WINDOWS,
         cells: initCells(INIT_CORE.nbR, INIT_CORE.nbC) // Init an empty board
         // cells: [
-        //   //Test Schelling
-        //   [0, 1, 2],
-        //   [3, 4, 5],
-        //   [6, 7, 0]
+        //Test Schelling
+        //   [0, 0, 0, 0, 0, 0, 0],
+        //   [0, 3, 0, 1, 1, 0, 0],
+        //   [0, 3, 1, 1, 1, 2, 0],
+        //   [0, 1, 1, 3, 2, 2, 0],
+        //   [0, 0, 1, 2, 2, 2, 0],
+        //   [0, 0, 3, 2, 2, 1, 0],
+        //   [0, 0, 0, 0, 0, 0, 0]
         // ]
       },
       core: {
@@ -60,6 +64,8 @@ export default class CellularGame extends React.Component {
   componentDidMount() {
     // When the component mount, add event on resize
     // Handle when the user resize its windows
+
+    this.handleResize();
     window.addEventListener("resize", this.handleResize);
   }
 
@@ -118,8 +124,8 @@ export default class CellularGame extends React.Component {
       case "Conway":
         this.automaton = new Conway(this.state.windows.cells);
         break;
-      case "Schelling":
-        this.automaton = new Schelling(this.state.windows.cells);
+      case "Immigration":
+        this.automaton = new Immigration(this.state.windows.cells);
         break;
       default:
         console.error("Error in the Automaton selection");
@@ -167,6 +173,15 @@ export default class CellularGame extends React.Component {
 
     newState.cells[indR][indC] = this.getValue(indR, indC); // Change the value of the cell
     this.setStateWindows(newState);
+  };
+
+  randomCells = () => {
+    this.initAutomaton();
+
+    let nextState = this.getStateWindows();
+    nextState.cells = this.automaton.randomMatrix();
+
+    this.setStateWindows(nextState);
   };
 
   /* Handle the resize of the windows */
@@ -305,6 +320,7 @@ export default class CellularGame extends React.Component {
           step={this.stepAutomaton}
           clear={this.clearCells}
           play={this.handlePlayPause}
+          randomCells={this.randomCells}
         />
       </div>
     );

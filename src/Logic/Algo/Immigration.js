@@ -1,10 +1,8 @@
 import { Automaton } from "./Automaton";
 
-const MAX_STATES = 4;
-
-export class Schelling extends Automaton {
+export class Immigration extends Automaton {
   constructor(matrix) {
-    super(matrix, 8);
+    super(matrix, 4);
   }
 
   changeValue(indR, indC) {
@@ -23,17 +21,17 @@ export class Schelling extends Automaton {
     // indC -> value of the column
     // Return the next state of the cell
     const currentState = this.matrix[indR][indC];
-    const stateToCheck = (currentState + 1) % MAX_STATES;
+    const nextState = (currentState + 1) % this.nbStates;
 
-    const neighbour = this.countNeighbours(indR, indC, currentState); // Count the cells alive
+    const neighbour = this.countNeighbours(indR, indC, nextState); // Count the cells alive
 
-    console.log(
-      `x ${indC}, y ${indR}, cS ${currentState}, sC ${stateToCheck}, n ${neighbour}`
-    );
+    // console.log(
+    //   `x ${indC}, y ${indR}, cS ${currentState}, sC ${nextState}, n ${neighbour}`
+    // );
 
     if (neighbour >= 3) {
       // 3 neighbours, the cell evolve
-      return stateToCheck;
+      return nextState;
     } else {
       // Stay in current state
       return currentState;

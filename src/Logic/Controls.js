@@ -107,6 +107,7 @@ export default class Controls extends React.Component {
         {this.playPauseButton()}
         <button onClick={() => this.props.step()}>Step</button>
         <button onClick={() => this.props.clear()}>Clear</button>
+        <button onClick={() => this.props.randomCells()}>Random</button>
       </form>
     );
   }
