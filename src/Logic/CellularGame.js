@@ -3,28 +3,12 @@ import Controls from "./Controls";
 import Windows from "../Display/Windows";
 
 import { Conway } from "./Algo/Conway";
-import { TYPE_SIMULATION } from "../constantes/Constantes";
 import { Schelling } from "./Algo/Schelling";
-
-const INIT_CONTROLS = {
-  // Initial state of the controls section
-  speed: 500, // Speed of the animation in ms
-  type: TYPE_SIMULATION[0], // Type of the simulation (ie automaton)
-  play: false // true is the animation is set to play
-};
-
-const INIT_WINDOWS = {
-  // Initial state of the windows section
-  click: false, // To handle when the user click
-  cells: [] // represent the board. Matrix of int
-};
-
-const INIT_CORE = {
-  // Initial state of the core section (ie common to all sections)
-  nbR: 3, // Number of rows
-  nbC: 3, // Number of columns
-  size: 30 // Size of the blocs
-};
+import {
+  INIT_CONTROLS,
+  INIT_CORE,
+  INIT_WINDOWS
+} from "../constantes/Constantes";
 
 const initCells = (nbRows, nbColumns) => {
   // Init all the cells at 0 in the matrix
@@ -56,12 +40,13 @@ export default class CellularGame extends React.Component {
       },
       windows: {
         ...INIT_WINDOWS,
-        // cells: initCells(INIT_CORE.nbR, INIT_CORE.nbC) // Init an empty board
-        cells: [
-          [0, 1, 2],
-          [3, 4, 5],
-          [6, 7, 8]
-        ]
+        cells: initCells(INIT_CORE.nbR, INIT_CORE.nbC) // Init an empty board
+        // cells: [
+        //   //Test Schelling
+        //   [0, 1, 2],
+        //   [3, 4, 5],
+        //   [6, 7, 0]
+        // ]
       },
       core: {
         ...INIT_CORE
@@ -159,7 +144,6 @@ export default class CellularGame extends React.Component {
         this.automaton = new Conway(this.state.windows.cells);
         break;
       case "Schelling":
-        console.log("init schelling");
         this.automaton = new Schelling(this.state.windows.cells);
         break;
       default:
@@ -250,14 +234,32 @@ export default class CellularGame extends React.Component {
     return this.state.controls;
   };
 
+  getValue = (x, y) => {
+    this.initAutomaton();
+    return this.automaton.changeValue(x, y);
+  };
+
+  changeValueCell = (x, y, stateWindows = null) => {
+    let newState = stateWindows;
+    if (newState === null) {
+      newState = this.getStateWindows();
+    }
+
+    newState.cells[y][x] = this.getValue(x, y);
+    this.setStateWindows(newState);
+  };
+
   render() {
     console.log(this.state);
     return (
       <div>
         <h1>Automate Cellulaire</h1>
-        <h2>
-          {this.state.test.w} x {this.state.test.h}
-        </h2>
+
+        <div>
+          <h2>
+            Test Resize {this.state.test.w} x {this.state.test.h}
+          </h2>
+        </div>
 
         <Windows
           specific={{
@@ -268,6 +270,7 @@ export default class CellularGame extends React.Component {
             set: this.setStateCore,
             get: this.getCoreState
           }}
+          changeValueCell={this.changeValueCell}
         />
 
         <Controls

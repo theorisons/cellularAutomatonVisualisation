@@ -1,23 +1,30 @@
 import { Automaton } from "./Automaton";
-import { stat } from "fs";
 
 const MAX_STATES = 4;
 
 export class Schelling extends Automaton {
   constructor(matrix) {
-    super(matrix);
+    super(matrix, 8);
   }
 
-  rules(position) {
-    // Position contains position x and y of the cell to check
+  changeValue(x, y) {
+    // x and y are the coordinates of the cell to check
+    // Return the value to put in the matrix
+    // Circular value based on the number of states
+
+    return (this.matrix[y][x] + 1) % this.nbStates;
+  }
+
+  rules(x, y) {
+    // x and y are the coordinates of the cell to check
     // Return the next state of the cell
-    const currentState = this.matrix[position.y][position.x];
+    const currentState = this.matrix[y][x];
     const stateToCheck = (currentState + 1) % MAX_STATES;
 
-    const neighbour = this.countNeighbours(position, currentState); // Count the cells alive
+    const neighbour = this.countNeighbours(x, y, currentState); // Count the cells alive
 
     console.log(
-      `x ${position.x}, y ${position.y}, cS ${currentState}, sC ${stateToCheck}, n ${neighbour}`
+      `x ${x}, y ${y}, cS ${currentState}, sC ${stateToCheck}, n ${neighbour}`
     );
 
     if (neighbour >= 3) {

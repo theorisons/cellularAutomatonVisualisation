@@ -2,14 +2,13 @@ import React from "react";
 import Bloc from "./Bloc";
 
 export default class Windows extends React.Component {
-  handleStateChange = (x, y) => {
+  handleEnterNewBloc = (x, y) => {
     // Function call by the children
-    // If the user is clicking, change the value of the calling bloc
-    let currentState = this.props.specific.get();
+    // If the user is clicking, change the value of the calling bloc on enter
+    const click = this.props.specific.get().click;
 
-    if (currentState.click) {
-      currentState.cells[y][x] = currentState.cells[y][x] === 0 ? 1 : 0; // Change the cell status
-      this.props.specific.set(currentState);
+    if (click) {
+      this.props.changeValueCell(x, y);
     }
   };
 
@@ -22,9 +21,8 @@ export default class Windows extends React.Component {
     nextState.click = !nextState.click;
     if (nextState.click) {
       // We need to change the current value of the bloc
-      this.handleStateChange(x, y);
+      this.props.changeValueCell(x, y, nextState);
     }
-    this.props.specific.set(nextState);
   };
 
   displayBlocs() {
@@ -46,7 +44,7 @@ export default class Windows extends React.Component {
               position={{ x: indC, y: indR }}
               value={value}
               handleClic={this.handleUserClicInsideBloc}
-              handleEnter={this.handleStateChange}
+              handleEnter={this.handleEnterNewBloc}
               size={size}
             />
           );

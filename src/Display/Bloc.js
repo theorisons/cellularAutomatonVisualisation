@@ -1,12 +1,14 @@
 import React from "react";
 import "./Bloc.css";
 
+import { NB_COLORS } from "../constantes/Constantes";
+
 export default class Bloc extends React.Component {
   createClass() {
     // Change the class of the bloc
     const value = this.props.value;
-    if (0 <= value && value <= 7) {
-      // Only 8 colors are set in the CSS
+    if (0 <= value && value < NB_COLORS) {
+      // To make sure the color is set in the CSS file
       return `active${value}`;
     } else {
       console.error("Error in the value of the cell");

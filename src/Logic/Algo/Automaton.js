@@ -1,11 +1,12 @@
 export class Automaton {
-  constructor(matrix) {
+  constructor(matrix, nbStates) {
     // Init the object with the board
     // All the cells status
 
     this.matrix = matrix; // Matrix is use as reference
     this.nbR = this.matrix.length;
     this.nbC = this.matrix[0].length;
+    this.nbStates = nbStates; // Nb of states in the simulation
   }
 
   getMatrix() {
@@ -18,20 +19,12 @@ export class Automaton {
     let nMatrix = [];
     let tmpR = [];
 
-    let position = {
-      // Position to compute
-      x: 0,
-      y: 0
-    };
-
     for (let r = 0; r < this.nbR; r++) {
       // Iterate over the board, on apply rules on each cell
       tmpR = []; // Next row of the matrix
-      position.y = r;
 
       for (let c = 0; c < this.nbC; c++) {
-        position.x = c;
-        tmpR.push(this.rules(position)); // Calcul of the futur state of the cell
+        tmpR.push(this.rules(c, r)); // Calcul of the futur state of the cell
       }
 
       nMatrix.push(tmpR);
@@ -42,18 +35,25 @@ export class Automaton {
     return nMatrix;
   }
 
-  rules(position) {
-    // Position contains position x and y of the cell to check
+  rules(x, y) {
+    // x and y are the coordinates of the cell to check
     // Define all the rules of the simulation
     // Kind of abstract method
     // Define in the children
     // Return the next state of the cell
   }
 
-  countNeighbours(position, vToCheck) {
-    // Position contains position x and y of the cell to check
+  changeValue(x, y) {
+    // x and y are the coordinates of the cell to check
+    // Define how to change the status of a cell
+    // Kind of abstract method
+    // Define in the children
+    // Return the value to put in the matrix
+  }
+
+  countNeighbours(x, y, vToCheck) {
+    // x and y are the coordinates of the cell to check
     // vToCheck is the state of the neighbour to check
-    const { x, y } = position;
 
     // Values to iterate (ie Neighboors)
     const startRow = this.start(y);
@@ -80,21 +80,21 @@ export class Automaton {
     return compt;
   }
 
-  start(posi) {
+  start(val) {
     // return the value where start the counting of the neighbour
-    if (posi === 0) {
+    if (val === 0) {
       // We don't use circular board
       return 0;
     }
-    return posi - 1;
+    return val - 1;
   }
 
-  end(posi, size) {
+  end(val, size) {
     // return the value where end the counting of the neighbour
-    if (posi === size - 1) {
+    if (val === size - 1) {
       // We don't use circular board
-      return posi;
+      return val;
     }
-    return posi + 1;
+    return val + 1;
   }
 }
