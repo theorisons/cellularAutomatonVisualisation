@@ -250,12 +250,16 @@ export default class CellularGame extends React.Component {
   setStateCore = newCore => {
     // Set the state of the core part
     let nextState = this.state;
-    nextState.core = newCore;
 
-    nextState.windows.cells = this.resizeCells(
-      nextState.core.nbR,
-      nextState.core.nbC
-    ); // Init a new board
+    if (
+      nextState.core.nbC !== newCore.nbC ||
+      nextState.core.nbR !== newCore.nbR
+    ) {
+      // The size of the matrix changed
+      nextState.windows.cells = this.resizeCells(newCore.nbR, newCore.nbC); // Init a new board
+    }
+
+    nextState.core = newCore;
 
     this.resetAutomaton(); // Clear the previous automaton because dimensions could be differents
 
