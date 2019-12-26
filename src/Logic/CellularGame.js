@@ -120,6 +120,10 @@ export default class CellularGame extends React.Component {
         console.error("Error in the Automaton selection");
         break;
     }
+
+    if (!this.automaton.checkCells()) {
+      this.clearCells();
+    }
   };
 
   stepAutomaton = () => {
@@ -268,8 +272,24 @@ export default class CellularGame extends React.Component {
   setStateControls = newControls => {
     // Set the state of the controls part
     let nextState = this.state;
+    let callBack = undefined;
+
+    if (nextState.controls.speed !== newControls.speed) {
+      // the value of the animation changed
+      callBack = this.changeValueAnimation;
+    }
+
+    if (nextState.controls.type !== newControls.type) {
+      // the value of the automaton changed
+      callBack = () => {
+        this.resetAutomaton();
+        this.initAutomaton();
+      };
+    }
+
     nextState.controls = newControls;
-    this.setState(nextState, this.changeValueAnimation()); // Call back of the animation function
+
+    this.setState(nextState, callBack); // set the state and callback on specific changed
     // Change the speed of the animation if the speed has change
   };
 

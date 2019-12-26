@@ -55,6 +55,34 @@ export class Automaton {
     return nMatrix;
   }
 
+  checkCells() {
+    // Iterate over the matrix
+    // Return a boolean
+    // true => the matrix is correct according to the automaton
+    // false => incorrect
+
+    for (let r = 0; r < this.nbR; r++) {
+      for (let c = 0; c < this.nbC; c++) {
+        if (!this.checkValue(r, c)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  checkValue(indR, indC) {
+    // (indC, indR) are the coordinates of the cell
+    // indR -> value of the row
+    // indC -> value of the column
+    // Check if the value can be used in the automaton
+    // Return a boolean
+
+    return (
+      0 <= this.matrix[indR][indC] && this.matrix[indR][indC] < this.nbStates
+    );
+  }
+
   rules(indR, indC) {
     // (indC, indR) are the coordinates of the cell
     // indR -> value of the row

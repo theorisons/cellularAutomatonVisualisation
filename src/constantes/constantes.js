@@ -1,4 +1,4 @@
-export const TYPE_SIMULATION = ["Conway", "Immigration", "Segregation"]; // All the simulation implemented
+export const TYPE_SIMULATION = ["Conway", "Immigration"]; // All the simulation implemented
 
 export const INIT_CONTROLS = {
   // Initial state of the controls section

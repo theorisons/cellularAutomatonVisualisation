@@ -10,7 +10,7 @@ export default class Controls extends React.Component {
 
   updateValueSpecific = (event, stateTarget) => {
     // update the state specific to controls
-    let nextState = this.props.specific.get();
+    let nextState = { ...this.props.specific.get() };
     const value = event.target.value;
 
     nextState[stateTarget] = value;
@@ -20,7 +20,7 @@ export default class Controls extends React.Component {
 
   updateValuesCore = (event, stateTarget) => {
     // update the state core
-    let nextState = this.props.core.get();
+    let nextState = { ...this.props.core.get() };
     const value = event.target.value;
 
     nextState[stateTarget] = value;
