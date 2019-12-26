@@ -17,7 +17,6 @@ import {
   INIT_CORE,
   INIT_WINDOWS
 } from "../constantes/constantes";
-import { initCells } from "../constantes/utilities";
 
 export default class CellularGame extends React.Component {
   // CellularGame contains the state of the controls and Windows sections
@@ -35,17 +34,7 @@ export default class CellularGame extends React.Component {
       windows: {
         // State of the windows part
         ...INIT_WINDOWS,
-        cells: initCells(INIT_CORE.nbR, INIT_CORE.nbC) // Init an empty board
-        // cells: [
-        //Test Schelling
-        //   [0, 0, 0, 0, 0, 0, 0],
-        //   [0, 3, 0, 1, 1, 0, 0],
-        //   [0, 3, 1, 1, 1, 2, 0],
-        //   [0, 1, 1, 3, 2, 2, 0],
-        //   [0, 0, 1, 2, 2, 2, 0],
-        //   [0, 0, 3, 2, 2, 1, 0],
-        //   [0, 0, 0, 0, 0, 0, 0]
-        // ]
+        cells: this.emptyCells(INIT_CORE.nbR, INIT_CORE.nbC) // Init an empty board
       },
       core: {
         // Shared state
@@ -227,12 +216,29 @@ export default class CellularGame extends React.Component {
   };
 
   clearCells = () => {
+    // Set the matrix with 0
     let newState = this.state;
-    const newMatrix = initCells(newState.core.nbR, newState.core.nbC);
+    const newMatrix = this.emptyCells(newState.core.nbR, newState.core.nbC);
     newState.windows.cells = newMatrix;
-    this.automaton = null; // Clear the previous automaton because dimensions have changed
+    this.resetAutomaton(); // Clear the previous automaton because dimensions have changed
 
     this.setState(newState);
+  };
+
+  emptyCells = (nbRows, nbColumns) => {
+    // Init all the cells at 0 in the matrix
+    let matrix = [];
+    let tmpRow = [];
+
+    for (let r = 0; r < nbRows; r++) {
+      // iterate over the rows and columns of the matrix
+      tmpRow = [];
+      for (let c = 0; c < nbColumns; c++) {
+        tmpRow.push(0); // set value to 0
+      }
+      matrix.push(tmpRow);
+    }
+    return matrix;
   };
 
   /* Setter of the state */
@@ -245,9 +251,9 @@ export default class CellularGame extends React.Component {
     nextState.windows.cells = this.resizeCells(
       nextState.core.nbR,
       nextState.core.nbC
-    ); // Init an empty board
+    ); // Init a new board
 
-    this.automaton = null; // Clear the previous automaton because dimensions could be differents
+    this.resetAutomaton(); // Clear the previous automaton because dimensions could be differents
 
     this.setState(nextState);
   };

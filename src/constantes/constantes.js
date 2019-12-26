@@ -15,9 +15,9 @@ export const INIT_WINDOWS = {
 
 export const INIT_CORE = {
   // Initial state of the core section (ie common to all sections)
-  nbR: 3, // Number of rows
-  nbC: 3, // Number of columns
-  size: 30 // Size of the blocs
+  nbR: 40, // Number of rows
+  nbC: 40, // Number of columns
+  size: 20 // Size of the blocs
 };
 
 export const NB_COLORS = 8; // Number of colors set in the CSS

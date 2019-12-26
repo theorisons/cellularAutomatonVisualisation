@@ -2,7 +2,7 @@ import { Automaton } from "./Automaton";
 
 export class Immigration extends Automaton {
   constructor(matrix) {
-    super(matrix, 4);
+    super(matrix, 3);
   }
 
   changeValue(indR, indC) {
@@ -24,10 +24,6 @@ export class Immigration extends Automaton {
     const nextState = (currentState + 1) % this.nbStates;
 
     const neighbour = this.countNeighbours(indR, indC, nextState); // Count the cells alive
-
-    // console.log(
-    //   `x ${indC}, y ${indR}, cS ${currentState}, sC ${nextState}, n ${neighbour}`
-    // );
 
     if (neighbour >= 3) {
       // 3 neighbours, the cell evolve
