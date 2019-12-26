@@ -139,17 +139,11 @@ export default class CellularGame extends React.Component {
     this.setStateWindows(nextStateWindows);
   };
 
-  resetAutomaton = () => {
-    // Reset the automaton.
-    this.automaton = null;
-  };
-
   getValue = (indR, indC) => {
     // Get the new value of the cell on click (or enter)
     // indR -> value of the row
     // indC -> value of the column
     // (indC, indR) are the coordinates of the cell
-    this.initAutomaton(); // Make sure it is the right rules
     return this.automaton.changeValue(indR, indC);
   };
 
@@ -224,7 +218,7 @@ export default class CellularGame extends React.Component {
     let newState = this.state;
     const newMatrix = this.emptyCells(newState.core.nbR, newState.core.nbC);
     newState.windows.cells = newMatrix;
-    this.resetAutomaton(); // Clear the previous automaton because dimensions have changed
+    this.initAutomaton(); // Clear the previous automaton because dimensions have changed
 
     this.setState(newState);
   };
@@ -250,6 +244,7 @@ export default class CellularGame extends React.Component {
   setStateCore = newCore => {
     // Set the state of the core part
     let nextState = this.state;
+    let callBack = undefined;
 
     if (
       nextState.core.nbC !== newCore.nbC ||
@@ -257,13 +252,12 @@ export default class CellularGame extends React.Component {
     ) {
       // The size of the matrix changed
       nextState.windows.cells = this.resizeCells(newCore.nbR, newCore.nbC); // Init a new board
+      callBack = this.initAutomaton; // Clear the previous automaton because dimensions could be differents
     }
 
     nextState.core = newCore;
 
-    this.resetAutomaton(); // Clear the previous automaton because dimensions could be differents
-
-    this.setState(nextState);
+    this.setState(nextState, callBack);
   };
 
   setStateWindows = newWindows => {
@@ -286,7 +280,6 @@ export default class CellularGame extends React.Component {
     if (nextState.controls.type !== newControls.type) {
       // the value of the automaton changed
       callBack = () => {
-        this.resetAutomaton();
         this.initAutomaton();
       };
     }
