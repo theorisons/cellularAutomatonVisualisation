@@ -100,7 +100,7 @@ export default class Controls extends React.Component {
               type="range"
               value={nbR}
               min="1"
-              max="40"
+              max="100"
               step="1"
               onChange={event => this.updateValuesCore(event, "nbR")}
             />
@@ -112,7 +112,7 @@ export default class Controls extends React.Component {
               type="range"
               value={nbC}
               min="1"
-              max="40"
+              max="100"
               step="1"
               onChange={event => this.updateValuesCore(event, "nbC")}
             />

@@ -2,7 +2,7 @@ import { Automaton } from "./Automaton";
 
 export class Immigration extends Automaton {
   constructor(matrix) {
-    super(matrix, 3);
+    super(matrix, 4);
   }
 
   changeValue(indR, indC) {
