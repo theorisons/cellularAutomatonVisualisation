@@ -279,9 +279,7 @@ export default class CellularGame extends React.Component {
 
     if (nextState.controls.type !== newControls.type) {
       // the value of the automaton changed
-      callBack = () => {
-        this.initAutomaton();
-      };
+      callBack = this.initAutomaton;
     }
 
     nextState.controls = newControls;
@@ -308,7 +306,6 @@ export default class CellularGame extends React.Component {
   };
 
   render() {
-    // console.log(this.state);
     return (
       <div>
         <h1>Automate Cellulaire</h1>
@@ -325,8 +322,8 @@ export default class CellularGame extends React.Component {
             set: this.setStateWindows
           }}
           core={{
-            set: this.setStateCore,
-            get: this.getCoreState
+            get: this.getCoreState,
+            set: this.setStateCore
           }}
           changeValueCell={this.changeValueCell}
         />
@@ -337,8 +334,8 @@ export default class CellularGame extends React.Component {
             set: this.setStateControls
           }}
           core={{
-            set: this.setStateCore,
-            get: this.getCoreState
+            get: this.getCoreState,
+            set: this.setStateCore
           }}
           step={this.stepAutomaton}
           clear={this.clearCells}
