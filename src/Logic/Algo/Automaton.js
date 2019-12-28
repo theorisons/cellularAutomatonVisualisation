@@ -116,18 +116,34 @@ export class Automaton {
 
     let compt = 0;
 
-    for (let r = startRow; r <= endRow; r++) {
+    // Circular board
+    for (let r = -1; r <= 1; r++) {
       // Iterate over the neighboors
-      for (let c = startCol; c <= endCol; c++) {
-        if (r !== indR || c !== indC) {
+      for (let c = -1; c <= 1; c++) {
+        let vR = (indR + r + this.nbR) % this.nbR;
+        let vC = (indC + c + this.nbC) % this.nbC;
+        if (r !== 0 || c !== 0) {
           // We don't count the cell itself
-          if (this.matrix[r][c] === vToCheck) {
+          if (this.matrix[vR][vC] === vToCheck) {
             // Count the state of the cell
             compt += 1;
           }
         }
       }
     }
+
+    // for (let r = startRow; r <= endRow; r++) {
+    //   // Iterate over the neighboors
+    //   for (let c = startCol; c <= endCol; c++) {
+    //     if (r !== indR || c !== indC) {
+    //       // We don't count the cell itself
+    //       if (this.matrix[r][c] === vToCheck) {
+    //         // Count the state of the cell
+    //         compt += 1;
+    //       }
+    //     }
+    //   }
+    // }
 
     return compt;
   }

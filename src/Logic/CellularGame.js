@@ -7,15 +7,19 @@ import Windows from "../Display/Windows";
 
 /* Automaton */
 
-import { Conway } from "./Algo/Conway";
-import { Immigration } from "./Algo/Immigration";
+import { GameOfLife } from "./Algo/GameOfLife";
+import { ColoredVariant } from "./Algo/ColoredVariant";
 
 /* Constantes */
 
 import {
+  /* Use for the state */
   INIT_CONTROLS,
   INIT_CORE,
-  INIT_WINDOWS
+  INIT_WINDOWS,
+  /* Use for the init of the automaton */
+  GAME_OF_LIFE,
+  COLORED_VARIANT
 } from "../constantes/constantes";
 
 export default class CellularGame extends React.Component {
@@ -112,11 +116,17 @@ export default class CellularGame extends React.Component {
     // Init once even if the matrix change
     // The matrix use by the Automaton is a reference to the cells in the state
     switch (this.state.controls.type) {
-      case "Conway":
-        this.automaton = new Conway(this.state.windows.cells);
+      case GAME_OF_LIFE:
+        this.automaton = new GameOfLife(
+          this.state.windows.cells,
+          this.state.controls.options.variant
+        );
         break;
-      case "Immigration":
-        this.automaton = new Immigration(this.state.windows.cells);
+      case COLORED_VARIANT:
+        this.automaton = new ColoredVariant(
+          this.state.windows.cells,
+          this.state.controls.options.nbStates
+        );
         break;
       default:
         console.error("Error in the Automaton selection");
@@ -271,8 +281,9 @@ export default class CellularGame extends React.Component {
 
   setStateControls = newControls => {
     // Set the state of the controls part
+
     let nextState = this.state;
-    let callBack = undefined;
+    let callBack = undefined; // Only one call back is possible according to the control construction
 
     if (nextState.controls.speed !== newControls.speed) {
       // the value of the animation changed
@@ -281,6 +292,11 @@ export default class CellularGame extends React.Component {
 
     if (nextState.controls.type !== newControls.type) {
       // the value of the automaton changed
+      callBack = this.initAutomaton;
+    }
+
+    if (nextState.controls.options !== newControls.options) {
+      // The user change options of the automaton
       callBack = this.initAutomaton;
     }
 
