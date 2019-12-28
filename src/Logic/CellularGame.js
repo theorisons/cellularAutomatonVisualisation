@@ -56,6 +56,8 @@ export default class CellularGame extends React.Component {
 
     this.handleResize();
     window.addEventListener("resize", this.handleResize);
+
+    this.initAutomaton(); // Init the automaton for the first time
   }
 
   componentWillUnmount() {

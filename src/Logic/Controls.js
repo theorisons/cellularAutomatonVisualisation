@@ -2,7 +2,7 @@ import React from "react";
 
 import { TYPE_SIMULATION, BUTTON_COLOR } from "../constantes/constantes";
 
-const MARGIN_BUTTONS = 1;
+const MARGIN_BUTTONS = 1; // Value of the margin X for the buttons
 
 export default class Controls extends React.Component {
   displayOptionsSimulation() {

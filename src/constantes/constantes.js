@@ -3,7 +3,7 @@ export const TYPE_SIMULATION = ["Conway", "Immigration"]; // All the simulation 
 export const INIT_CONTROLS = {
   // Initial state of the controls section
   speed: 500, // Speed of the animation in ms
-  type: TYPE_SIMULATION[1], // Type of the simulation (ie automaton)
+  type: TYPE_SIMULATION[0], // Type of the simulation (ie automaton)
   play: false // true is the animation is set to play
 };
 
