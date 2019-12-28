@@ -324,6 +324,30 @@ export default class CellularGame extends React.Component {
   };
 
   render() {
+    let bob = new Map();
+
+    const k1 = "R2C4";
+    const k2 = "R-2C8";
+
+    const r = -2;
+    const c = 8;
+
+    bob.set(k1, "k1");
+    bob.set(k2, "k2");
+
+    console.log(`R${r}C${c}`);
+    console.log(k2);
+
+    console.log(bob);
+    console.log(bob.get(k1));
+    console.log(bob.get(k2));
+    console.log(bob.get({ x: 0, y: 0 }));
+    console.log(bob.get({ x: 2, y: 3 }));
+    console.log(bob.get("R-2C8"));
+    console.log(bob.get(`R${r}C${c}`));
+
+    console.log("BOB");
+
     return (
       <div>
         <h1>Automate Cellulaire</h1>
