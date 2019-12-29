@@ -11,7 +11,7 @@ export const HIGHLIFE = "HighLife";
 
 export const TYPE_GAME_OF_LIFE = [CONWAY, DAY_NIGHT, HIGHLIFE];
 
-const DEFAULT_SIMULATION = 1; // Number of the default simulation
+const DEFAULT_SIMULATION = 0; // Number of the default simulation
 
 export const INIT_CONTROLS = {
   // Initial state of the controls section
@@ -34,8 +34,8 @@ export const INIT_WINDOWS = {
 
 export const INIT_CORE = {
   // Initial state of the core section (ie common to all sections)
-  nbR: 30, // Number of rows
-  nbC: 30, // Number of columns
+  nbR: 20, // Number of rows
+  nbC: 20, // Number of columns
   size: 15 // Size of the blocs
 };
 
