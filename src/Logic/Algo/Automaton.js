@@ -1,34 +1,27 @@
+import {
+  getKeyFromCoordinates,
+  getCoordinatesFromKey,
+  getValueCell
+} from "../../constantes/utilities";
+
 export class Automaton {
-  constructor(map, nbStates, nbR, nbC, keyFromCoordinates, coordinatesFromKey) {
+  constructor(map, nbStates, nbR, nbC) {
     // Map contains the board
     // nbStates number of state of the automaton
     // nbR, nbC size of the board
+    // two functions to handle key in the map
 
     this.map = map; // Matrix is use as reference
     this.nbStates = nbStates; // Nb of states in the simulation
 
     this.nbR = nbR; // Number of rows
     this.nbC = nbC; // Number of columns
-
-    // Key and Coordinates in the map
-    this.keyFromCoordinates = keyFromCoordinates;
-    this.coordinatesFromKey = coordinatesFromKey;
   }
 
-  getMap() {
-    // Return the current map of the state of cells
-    return this.map;
-  }
+  getValueCell(indR, indC) {
+    // Return the value of the cell at coordinates (indC, indR)
 
-  getValue(indR, indC) {
-    // Return the value that correspond to the coordinates
-    const value = this.map.get(this.keyFromCoordinates(indR, indC));
-
-    if (value === undefined) {
-      // The value is not set so the cell is dead
-      return 0;
-    }
-    return value;
+    return getValueCell(indR, indC, this.map);
   }
 
   randomBoard() {
@@ -42,7 +35,7 @@ export class Automaton {
     for (let r = 0; r < this.nbR; r++) {
       // Iterate over the board
       for (let c = 0; c < this.nbC; c++) {
-        key = this.keyFromCoordinates(r, c);
+        key = getKeyFromCoordinates(r, c);
         value = Math.floor(Math.random() * Math.floor(this.nbStates));
 
         if (value !== 0) {
@@ -60,12 +53,13 @@ export class Automaton {
   next() {
     // Compute the next state of the simulation
     let nMap = new Map();
+
     let cValue; // value of the next state of the cell
     let cKey; // key to store in the map
 
     this.map.forEach((value, key) => {
       // Iterate over all alive cells
-      const { indR, indC } = this.coordinatesFromKey(key);
+      const { indR, indC } = getCoordinatesFromKey(key);
 
       // Iterate over the neighboors
       for (let r = indR - 1; r <= indR + 1; r++) {
@@ -73,7 +67,7 @@ export class Automaton {
           cValue = this.rules(r, c);
           if (cValue !== 0) {
             // Only store alive cell
-            cKey = this.keyFromCoordinates(r, c);
+            cKey = getKeyFromCoordinates(r, c);
 
             nMap.delete(cKey); // in case the cell was already visited
             nMap.set(cKey, cValue);
@@ -129,7 +123,7 @@ export class Automaton {
     // Return the next value of the cell
     // Circular change
 
-    return (this.getValue(indR, indC) + 1) % this.nbStates;
+    return (this.getValueCell(indR, indC) + 1) % this.nbStates;
   }
 
   countNeighbours(indR, indC, vToCheck) {
@@ -146,7 +140,7 @@ export class Automaton {
       for (let c = indC - 1; c <= indC + 1; c++) {
         if (r !== indR || c !== indC) {
           // We don't count the cell itself
-          cVal = this.getValue(r, c);
+          cVal = this.getValueCell(r, c);
           if (cVal === vToCheck) {
             // Count the state of the cell
             compt += 1;

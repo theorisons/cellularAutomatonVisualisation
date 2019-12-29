@@ -2,16 +2,27 @@ import { Automaton } from "./Automaton";
 import { CONWAY, DAY_NIGHT, HIGHLIFE } from "../../constantes/constantes";
 
 export class GameOfLife extends Automaton {
-  constructor(
-    map,
-    nbR,
-    nbC,
-    getKeyFromCoordinates,
-    getCoordinatesFromKey,
-    variant
-  ) {
-    super(map, 2, nbR, nbC, getKeyFromCoordinates, getCoordinatesFromKey); // The game of life has always 2 states
-    this.variant = variant;
+  constructor(map, nbR, nbC, variant) {
+    super(map, 2, nbR, nbC); // The game of life has always 2 states
+
+    this.fNext = undefined; // Function to call each next
+    // Depend on the variant choosen
+
+    switch (variant) {
+      // Select the right rules based on the variant
+      case CONWAY:
+        this.fNext = this.rulesConway;
+        break;
+      case DAY_NIGHT:
+        this.fNext = this.rulesDayNight;
+        break;
+      case HIGHLIFE:
+        this.fNext = this.rulesHighLife;
+        break;
+      default:
+        console.error("Error in the variant selection");
+        break;
+    }
   }
 
   rules(indR, indC) {
@@ -19,25 +30,10 @@ export class GameOfLife extends Automaton {
     // indR -> value of the row
     // indC -> value of the column
     // Return the next state of the cell based on the simulation variant
+    const cellValue = this.getValueCell(indR, indC);
     const neighbour = this.countNeighbours(indR, indC, 1); // Count the cells alive
-    const cellValue = this.getValue(indR, indC);
-    let nextCell = 0; // NextState of the cell
 
-    switch (this.variant) {
-      // Select the right rules based on the variant
-      case CONWAY:
-        nextCell = this.rulesConway(cellValue, neighbour);
-        break;
-      case DAY_NIGHT:
-        nextCell = this.rulesDayNight(cellValue, neighbour);
-        break;
-      case HIGHLIFE:
-        nextCell = this.rulesHighLife(cellValue, neighbour);
-        break;
-      default:
-        console.error("Error in the variant selection");
-        break;
-    }
+    const nextCell = this.fNext(cellValue, neighbour); // NextState of the cell
 
     return nextCell;
   }

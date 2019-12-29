@@ -20,7 +20,7 @@ export const INIT_CONTROLS = {
   options: {
     // Use for game of lige
     variant: TYPE_GAME_OF_LIFE[0],
-    // Use for Immigration
+    // Use for Colored Life
     nbStates: 3
   }, // Options specific to the automaton
   play: false // true is the animation is set to play
@@ -35,8 +35,8 @@ export const INIT_WINDOWS = {
 export const INIT_CORE = {
   // Initial state of the core section (ie common to all sections)
   nbR: 30, // Number of rows
-  nbC: 70, // Number of columns
-  size: 10 // Size of the blocs
+  nbC: 30, // Number of columns
+  size: 15 // Size of the blocs
 };
 
 export const NB_COLORS = 8; // Number of colors set in the CSS

@@ -21,6 +21,7 @@ import {
   GAME_OF_LIFE,
   COLORED_VARIANT
 } from "../constantes/constantes";
+import { getKeyFromCoordinates } from "../constantes/utilities";
 
 export default class CellularGame extends React.Component {
   // CellularGame contains the state of the controls and Windows sections
@@ -42,11 +43,6 @@ export default class CellularGame extends React.Component {
       core: {
         // Shared state
         ...INIT_CORE
-      },
-      test: {
-        // Test State
-        w: 0,
-        h: 0
       }
     };
   }
@@ -54,18 +50,8 @@ export default class CellularGame extends React.Component {
   /* Life cycle component */
 
   componentDidMount() {
-    // When the component mount, add event on resize
-    // Handle when the user resize its windows
-
-    this.handleResize();
-    window.addEventListener("resize", this.handleResize);
-
+    // When the component mount,
     this.initAutomaton(); // Init the automaton for the first time
-  }
-
-  componentWillUnmount() {
-    // Remove all events in the event manager of the component.
-    window.removeEventListener("resize", this.handleResize);
   }
 
   /* Animation part */
@@ -103,9 +89,9 @@ export default class CellularGame extends React.Component {
       this.stopAnimation();
     }
 
-    let newState = this.state;
-    newState.controls.play = !newState.controls.play;
-    this.setState(newState);
+    let controls = this.getStateControls();
+    controls.play = !controls.play;
+    this.setStateControls(controls);
   };
 
   /* Automaton part */
@@ -120,8 +106,6 @@ export default class CellularGame extends React.Component {
           this.state.windows.cells,
           this.state.core.nbR,
           this.state.core.nbC,
-          this.getKeyFromCoordinates,
-          this.getCoordinatesFromKey,
           this.state.controls.options.variant
         );
         break;
@@ -130,8 +114,6 @@ export default class CellularGame extends React.Component {
           this.state.windows.cells,
           this.state.core.nbR,
           this.state.core.nbC,
-          this.getKeyFromCoordinates,
-          this.getCoordinatesFromKey,
           this.state.controls.options.nbStates
         );
         break;
@@ -140,6 +122,7 @@ export default class CellularGame extends React.Component {
         break;
     }
 
+    // Check if the current board can be use for the current automaton
     if (!this.automaton.checkCells()) {
       this.clearCells();
     }
@@ -147,10 +130,6 @@ export default class CellularGame extends React.Component {
 
   stepAutomaton = () => {
     // Compute the next state
-    if (this.automaton === null) {
-      // If it's the first time, init the automaton
-      this.initAutomaton();
-    }
 
     let nextStateWindows = this.getStateWindows();
     nextStateWindows.cells = this.automaton.next(); // Compute the next state of the cells
@@ -158,50 +137,7 @@ export default class CellularGame extends React.Component {
     this.setStateWindows(nextStateWindows);
   };
 
-  getKeyFromCoordinates = (r, c) => {
-    // Return the value of the key for a cell at coordinates (c,r)
-    return `R${r}C${c}`;
-  };
-
-  getCoordinatesFromKey = key => {
-    // Return the value of the coordinates (c,r) from a key
-    // Return is an object
-    // The key is a string
-
-    let i = 1; // The first value is 'R'
-    let indR = "";
-    let indC = "";
-
-    while (key[i] !== "C") {
-      indR = indR + key[i];
-      i++;
-    }
-
-    i += 1; // Skip 'C"
-
-    for (; i < key.length; i++) {
-      indC = indC + key[i];
-    }
-
-    //Conver the strig value into integer
-    indR = parseInt(indR, 10);
-    indC = parseInt(indC, 10);
-
-    return { indR: indR, indC: indC };
-  };
-
-  getValueCell = (indR, indC) => {
-    // Return the value that correspond to the coordinates
-    const value = this.state.windows.cells.get(
-      this.getKeyFromCoordinates(indR, indC)
-    );
-
-    if (value === undefined) {
-      // The value is not set so the cell is dead
-      return 0;
-    }
-    return value;
-  };
+  /* Functions to use the board has Map */
 
   getNewValue = (indR, indC) => {
     // Get the new value of the cell on click (or enter)
@@ -223,7 +159,7 @@ export default class CellularGame extends React.Component {
     }
 
     const value = this.getNewValue(indR, indC); // Change the value of the cell
-    const key = this.getKeyFromCoordinates(indR, indC);
+    const key = getKeyFromCoordinates(indR, indC);
 
     newState.cells.delete(key); // remove the previous value (if it is store)
     newState.cells.set(key, value); // store the new value
@@ -231,58 +167,7 @@ export default class CellularGame extends React.Component {
     this.setStateWindows(newState);
   };
 
-  randomCells = () => {
-    this.initAutomaton();
-
-    let nextState = this.getStateWindows();
-    nextState.cells = this.automaton.randomBoard();
-
-    this.setStateWindows(nextState);
-  };
-
-  /* Handle the resize of the windows */
-
-  handleResize = () => {
-    // Handle when the user resize its windows
-    // Change the size of the blocs
-    // Change the number of blocs
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-
-    let nState = this.state;
-    nState.test = {
-      w: w,
-      h: h
-    };
-    this.setState(nState);
-  };
-
-  /* Cells handling */
-
-  resizeCells = (nbR, nbC) => {
-    // Not usefull with Map
-
-    // Return the matrix resize
-    // Keep as much values as possible
-    // Resize on top left corner
-    let newMatrix = [];
-    let tmpRow = [];
-
-    const oldMatrix = this.state.windows.cells;
-
-    for (let r = 0; r < nbR; r++) {
-      tmpRow = [];
-      for (let c = 0; c < nbC; c++) {
-        if (c < oldMatrix[0].length && r < oldMatrix.length) {
-          tmpRow.push(oldMatrix[r][c]);
-        } else {
-          tmpRow.push(0);
-        }
-      }
-      newMatrix.push(tmpRow);
-    }
-    return newMatrix;
-  };
+  /* Functions to set up the board */
 
   clearCells = () => {
     // Set the matrix with 0
@@ -299,6 +184,15 @@ export default class CellularGame extends React.Component {
     return new Map();
   };
 
+  randomCells = () => {
+    this.initAutomaton();
+
+    let nextState = this.getStateWindows();
+    nextState.cells = this.automaton.randomBoard();
+
+    this.setStateWindows(nextState);
+  };
+
   /* Setter of the state */
 
   setStateCore = newCore => {
@@ -310,9 +204,8 @@ export default class CellularGame extends React.Component {
       nextState.core.nbC !== newCore.nbC ||
       nextState.core.nbR !== newCore.nbR
     ) {
-      // The size of the matrix changed
-      // nextState.windows.cells = this.resizeCells(newCore.nbR, newCore.nbC); // Init a new board
-      callBack = this.initAutomaton; // Clear the previous automaton because dimensions could be differents
+      // The size of the board changed
+      callBack = this.initAutomaton; // Clear the previous automaton because dimensions are differents
     }
 
     nextState.core = newCore;
@@ -338,20 +231,18 @@ export default class CellularGame extends React.Component {
       callBack = this.changeValueAnimation;
     }
 
-    if (nextState.controls.type !== newControls.type) {
+    if (
+      nextState.controls.type !== newControls.type ||
       // the value of the automaton changed
-      callBack = this.initAutomaton;
-    }
-
-    if (nextState.controls.options !== newControls.options) {
+      nextState.controls.options !== newControls.options
       // The user change options of the automaton
+    ) {
       callBack = this.initAutomaton;
     }
 
     nextState.controls = newControls;
 
     this.setState(nextState, callBack); // set the state and callback on specific changed
-    // Change the speed of the animation if the speed has change
   };
 
   /* Getter of the state */
@@ -377,9 +268,6 @@ export default class CellularGame extends React.Component {
         <h1>Automate Cellulaire</h1>
 
         <div>
-          <h2>
-            Test Resize {this.state.test.w} x {this.state.test.h}
-          </h2>
           <h2>Nombre de cellules: {this.state.windows.cells.size}</h2>
         </div>
 
@@ -393,8 +281,6 @@ export default class CellularGame extends React.Component {
             set: this.setStateCore
           }}
           changeValueCell={this.changeValueCell}
-          getKeyFromCoordinates={this.getKeyFromCoordinates}
-          getValueCell={this.getValueCell}
         />
 
         <Controls
@@ -406,9 +292,9 @@ export default class CellularGame extends React.Component {
             get: this.getCoreState,
             set: this.setStateCore
           }}
+          play={this.handlePlayPause}
           step={this.stepAutomaton}
           clear={this.clearCells}
-          play={this.handlePlayPause}
           randomCells={this.randomCells}
         />
       </div>

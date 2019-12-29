@@ -1,6 +1,8 @@
 import React from "react";
 import Bloc from "./Bloc";
 
+import { getValueCell } from "../constantes/utilities";
+
 export default class Windows extends React.Component {
   handleEnterNewBloc = (indR, indC) => {
     // Function call by the children
@@ -34,6 +36,7 @@ export default class Windows extends React.Component {
   displayBlocs() {
     // return the board to display
     const { size, nbR, nbC } = this.props.core.get();
+    const { cells } = this.props.specific.get();
 
     let arrayBlocs = []; // Array of blocs
     let tmpRow = [];
@@ -45,7 +48,7 @@ export default class Windows extends React.Component {
       for (let c = 0; c < nbC; c++) {
         // Iterate over the columns
 
-        value = this.props.getValueCell(r, c); // value of the cell
+        value = getValueCell(r, c, cells); // value of the cell
 
         tmpRow.push(
           <Bloc
