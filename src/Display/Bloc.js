@@ -32,7 +32,7 @@ export default class Bloc extends React.Component {
         className={"bloc " + this.createClass()} // Class of bloc + active or not
         style={styles}
       >
-        {/* {this.props.value + 1} */}
+        {/* {this.props.value} */}
       </div>
     );
   }

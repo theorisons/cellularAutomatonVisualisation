@@ -33,30 +33,43 @@ export default class Windows extends React.Component {
 
   displayBlocs() {
     // return the board to display
-    const { cells } = this.props.specific.get();
-    const { size } = this.props.core.get();
+    const { size, nbR, nbC } = this.props.core.get();
 
-    return cells.map((arrayRow, indR) => (
-      // Iterate over a row
-      <div
-        className="d-flex justify-content-center align-items-center"
-        key={`R${indR}`}
-      >
-        {arrayRow.map((value, indC) => {
-          // Iterate over the state of the cells
-          return (
-            <Bloc
-              key={`R${indR}C${indC}`}
-              position={{ indR: indR, indC: indC }}
-              value={value}
-              handleClic={this.handleUserClicInsideBloc}
-              handleEnter={this.handleEnterNewBloc}
-              size={size}
-            />
-          );
-        })}
-      </div>
-    ));
+    let arrayBlocs = []; // Array of blocs
+    let tmpRow = [];
+    let value; // value of the cell
+
+    for (let r = 0; r < nbR; r++) {
+      tmpRow = [];
+
+      for (let c = 0; c < nbC; c++) {
+        // Iterate over the columns
+
+        value = this.props.getValueCell(r, c); // value of the cell
+
+        tmpRow.push(
+          <Bloc
+            key={`R${r}C${c}`}
+            position={{ indR: r, indC: c }}
+            value={value}
+            handleClic={this.handleUserClicInsideBloc}
+            handleEnter={this.handleEnterNewBloc}
+            size={size}
+          />
+        );
+      }
+
+      arrayBlocs.push(
+        <div
+          className="d-flex justify-content-center align-items-center"
+          key={`R${r}`}
+        >
+          {tmpRow}
+        </div>
+      );
+    }
+
+    return arrayBlocs;
   }
 
   render() {

@@ -1,86 +1,111 @@
 export class Automaton {
-  constructor(matrix, nbStates) {
-    // Init the object with the board
-    // All the cells status
+  constructor(map, nbStates, nbR, nbC, keyFromCoordinates, coordinatesFromKey) {
+    // Map contains the board
+    // nbStates number of state of the automaton
+    // nbR, nbC size of the board
 
-    this.matrix = matrix; // Matrix is use as reference
-    this.nbR = this.matrix.length; // Number of rows
-    this.nbC = this.matrix[0].length; // Number of columns
+    this.map = map; // Matrix is use as reference
     this.nbStates = nbStates; // Nb of states in the simulation
+
+    this.nbR = nbR; // Number of rows
+    this.nbC = nbC; // Number of columns
+
+    // Key and Coordinates in the map
+    this.keyFromCoordinates = keyFromCoordinates;
+    this.coordinatesFromKey = coordinatesFromKey;
   }
 
-  getMatrix() {
-    // Return the current matrix of the state of cells
-    return this.matrix;
+  getMap() {
+    // Return the current map of the state of cells
+    return this.map;
   }
 
-  randomMatrix() {
-    // Return a matrix with random state for the cell
-    let nMatrix = [];
-    let tmpR = [];
+  getValue(indR, indC) {
+    // Return the value that correspond to the coordinates
+    const value = this.map.get(this.keyFromCoordinates(indR, indC));
+
+    if (value === undefined) {
+      // The value is not set so the cell is dead
+      return 0;
+    }
+    return value;
+  }
+
+  randomBoard() {
+    // Init a board with random state for the cell
+    // Return the map of the new values
+    let nMap = new Map();
+
+    let key = null; // Key in the map
+    let value = null; // value in the map
 
     for (let r = 0; r < this.nbR; r++) {
       // Iterate over the board
-      tmpR = []; // Next row of the matrix
-
       for (let c = 0; c < this.nbC; c++) {
-        tmpR.push(Math.floor(Math.random() * Math.floor(this.nbStates))); // Randomized a state
+        key = this.keyFromCoordinates(r, c);
+        value = Math.floor(Math.random() * Math.floor(this.nbStates));
+
+        if (value !== 0) {
+          // We only store alive cells
+          nMap.set(key, value);
+        }
       }
-
-      nMatrix.push(tmpR);
     }
-    this.matrix = nMatrix; // update the new matrix reference
 
-    return nMatrix;
+    this.map = nMap; // update the new map reference
+
+    return nMap;
   }
 
   next() {
     // Compute the next state of the simulation
-    let nMatrix = [];
-    let tmpR = [];
+    let nMap = new Map();
+    let cValue; // value of the next state of the cell
 
-    for (let r = 0; r < this.nbR; r++) {
-      // Iterate over the board, on apply rules on each cell
-      tmpR = []; // Next row of the matrix
+    this.map.forEach((value, key) => {
+      // Iterate over all alive cells
+      const { indR, indC } = this.coordinatesFromKey(key);
 
-      for (let c = 0; c < this.nbC; c++) {
-        tmpR.push(this.rules(r, c)); // Calcul of the futur state of the cell
+      // Iterate over the neighboors
+      for (let r = indR - 1; r <= indR + 1; r++) {
+        for (let c = indC - 1; c <= indC + 1; c++) {
+          cValue = this.rules(r, c);
+          if (cValue !== 0) {
+            // Only store alive cell
+            nMap.set(this.keyFromCoordinates(r, c), cValue);
+          }
+        }
       }
+    });
 
-      nMatrix.push(tmpR);
-    }
+    this.map = nMap; // update the new map reference
 
-    this.matrix = nMatrix; // update the new matrix reference
-
-    return nMatrix;
+    return nMap;
   }
 
   checkCells() {
-    // Iterate over the matrix
+    // Iterate over the value of the cells
     // Return a boolean
-    // true => the matrix is correct according to the automaton
+    // true => the board is correct according to the automaton
     // false => incorrect
 
-    for (let r = 0; r < this.nbR; r++) {
-      for (let c = 0; c < this.nbC; c++) {
-        if (!this.checkValue(r, c)) {
-          return false;
-        }
+    let values = this.map.values(); // Map iterator that contain value
+
+    for (let s = 0; s < this.map.size; s++) {
+      // Iterate over the value of the cells
+      if (!this.checkValue(values.next().value)) {
+        return false;
       }
     }
+
     return true;
   }
 
-  checkValue(indR, indC) {
-    // (indC, indR) are the coordinates of the cell
-    // indR -> value of the row
-    // indC -> value of the column
+  checkValue(value) {
     // Check if the value can be used in the automaton
     // Return a boolean
 
-    return (
-      0 <= this.matrix[indR][indC] && this.matrix[indR][indC] < this.nbStates
-    );
+    return 0 <= value && value < this.nbStates;
   }
 
   rules(indR, indC) {
@@ -97,10 +122,10 @@ export class Automaton {
     // (indC, indR) are the coordinates of the cell
     // indR -> value of the row
     // indC -> value of the column
-    // Define how to change the status of a cell
-    // Kind of abstract method
-    // Define in the children
-    // Return the value to put in the matrix
+    // Return the next value of the cell
+    // Circular change
+
+    return (this.getValue(indR, indC) + 1) % this.nbStates;
   }
 
   countNeighbours(indR, indC, vToCheck) {
@@ -108,23 +133,16 @@ export class Automaton {
     // vToCheck is the state of the neighbour to check
 
     // Values to iterate (ie Neighboors)
-    const startRow = this.start(indR);
-    const endRow = this.end(indR, this.nbR);
-
-    const startCol = this.start(indC);
-    const endCol = this.end(indC, this.nbC);
 
     let compt = 0;
 
-    // Circular board
-    for (let r = -1; r <= 1; r++) {
-      // Iterate over the neighboors
-      for (let c = -1; c <= 1; c++) {
-        let vR = (indR + r + this.nbR) % this.nbR;
-        let vC = (indC + c + this.nbC) % this.nbC;
-        if (r !== 0 || c !== 0) {
+    // Iterate over the neighboors
+    for (let r = indR - 1; r <= indR + 1; r++) {
+      for (let c = indC - 1; c <= indC + 1; c++) {
+        if (r !== indR || c !== indC) {
           // We don't count the cell itself
-          if (this.matrix[vR][vC] === vToCheck) {
+
+          if (this.map.get(this.keyFromCoordinates(r, c)) === vToCheck) {
             // Count the state of the cell
             compt += 1;
           }
@@ -132,37 +150,6 @@ export class Automaton {
       }
     }
 
-    // for (let r = startRow; r <= endRow; r++) {
-    //   // Iterate over the neighboors
-    //   for (let c = startCol; c <= endCol; c++) {
-    //     if (r !== indR || c !== indC) {
-    //       // We don't count the cell itself
-    //       if (this.matrix[r][c] === vToCheck) {
-    //         // Count the state of the cell
-    //         compt += 1;
-    //       }
-    //     }
-    //   }
-    // }
-
     return compt;
-  }
-
-  start(val) {
-    // return the value where start the counting of the neighbour
-    if (val === 0) {
-      // We don't use circular board
-      return 0;
-    }
-    return val - 1;
-  }
-
-  end(val, size) {
-    // return the value where end the counting of the neighbour
-    if (val === size - 1) {
-      // We don't use circular board
-      return val;
-    }
-    return val + 1;
   }
 }

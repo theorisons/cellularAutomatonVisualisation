@@ -2,19 +2,16 @@ import { Automaton } from "./Automaton";
 import { CONWAY, DAY_NIGHT, HIGHLIFE } from "../../constantes/constantes";
 
 export class GameOfLife extends Automaton {
-  constructor(matrix, variant) {
-    super(matrix, 2); // The game of life has always 2 states
+  constructor(
+    map,
+    nbR,
+    nbC,
+    getKeyFromCoordinates,
+    getCoordinatesFromKey,
+    variant
+  ) {
+    super(map, 2, nbR, nbC, getKeyFromCoordinates, getCoordinatesFromKey); // The game of life has always 2 states
     this.variant = variant;
-  }
-
-  changeValue(indR, indC) {
-    // (indC, indR) are the coordinates of the cell
-    // indR -> value of the row
-    // indC -> value of the column
-    // Return the value to put in the matrix
-    // Either dead 0 or alive 1
-
-    return (this.matrix[indR][indC] + 1) % this.nbStates;
   }
 
   rules(indR, indC) {
@@ -23,18 +20,19 @@ export class GameOfLife extends Automaton {
     // indC -> value of the column
     // Return the next state of the cell based on the simulation variant
     const neighbour = this.countNeighbours(indR, indC, 1); // Count the cells alive
+    const cellValue = this.getValue(indR, indC);
     let nextCell = 0; // NextState of the cell
 
     switch (this.variant) {
       // Select the right rules based on the variant
       case CONWAY:
-        nextCell = this.rulesConway(this.matrix[indR][indC], neighbour);
+        nextCell = this.rulesConway(cellValue, neighbour);
         break;
       case DAY_NIGHT:
-        nextCell = this.rulesDayNight(this.matrix[indR][indC], neighbour);
+        nextCell = this.rulesDayNight(cellValue, neighbour);
         break;
       case HIGHLIFE:
-        nextCell = this.rulesHighLife(this.matrix[indR][indC], neighbour);
+        nextCell = this.rulesHighLife(cellValue, neighbour);
         break;
       default:
         console.error("Error in the variant selection");

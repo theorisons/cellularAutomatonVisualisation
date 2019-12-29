@@ -37,8 +37,7 @@ export default class CellularGame extends React.Component {
       },
       windows: {
         // State of the windows part
-        ...INIT_WINDOWS,
-        cells: this.emptyCells(INIT_CORE.nbR, INIT_CORE.nbC) // Init an empty board
+        ...INIT_WINDOWS
       },
       core: {
         // Shared state
@@ -119,12 +118,20 @@ export default class CellularGame extends React.Component {
       case GAME_OF_LIFE:
         this.automaton = new GameOfLife(
           this.state.windows.cells,
+          this.state.core.nbR,
+          this.state.core.nbC,
+          this.getKeyFromCoordinates,
+          this.getCoordinatesFromKey,
           this.state.controls.options.variant
         );
         break;
       case COLORED_VARIANT:
         this.automaton = new ColoredVariant(
           this.state.windows.cells,
+          this.state.core.nbR,
+          this.state.core.nbC,
+          this.getKeyFromCoordinates,
+          this.getCoordinatesFromKey,
           this.state.controls.options.nbStates
         );
         break;
@@ -151,7 +158,52 @@ export default class CellularGame extends React.Component {
     this.setStateWindows(nextStateWindows);
   };
 
-  getValue = (indR, indC) => {
+  getKeyFromCoordinates = (r, c) => {
+    // Return the value of the key for a cell at coordinates (c,r)
+    return `R${r}C${c}`;
+  };
+
+  getCoordinatesFromKey = key => {
+    // Return the value of the coordinates (c,r) from a key
+    // Return is an object
+    // The key is a string
+
+    let i = 1; // The first value is 'R'
+    let indR = "";
+    let indC = "";
+
+    while (key[i] !== "C") {
+      indR = indR + key[i];
+      i++;
+    }
+
+    i += 1; // Skip 'C"
+
+    for (; i < key.length; i++) {
+      indC = indC + key[i];
+    }
+
+    //Conver the strig value into integer
+    indR = parseInt(indR, 10);
+    indC = parseInt(indC, 10);
+
+    return { indR: indR, indC: indC };
+  };
+
+  getValueCell = (indR, indC) => {
+    // Return the value that correspond to the coordinates
+    const value = this.state.windows.cells.get(
+      this.getKeyFromCoordinates(indR, indC)
+    );
+
+    if (value === undefined) {
+      // The value is not set so the cell is dead
+      return 0;
+    }
+    return value;
+  };
+
+  getNewValue = (indR, indC) => {
     // Get the new value of the cell on click (or enter)
     // indR -> value of the row
     // indC -> value of the column
@@ -170,7 +222,17 @@ export default class CellularGame extends React.Component {
       newState = this.getStateWindows();
     }
 
-    newState.cells[indR][indC] = this.getValue(indR, indC); // Change the value of the cell
+    const value = this.getNewValue(indR, indC); // Change the value of the cell
+    const key = this.getKeyFromCoordinates(indR, indC);
+
+    console.log("val " + value);
+    console.log(newState.cells);
+
+    newState.cells.delete(key); // remove the previous value (if it is store)
+    newState.cells.set(key, value); // store the new value
+
+    console.log(newState.cells);
+
     this.setStateWindows(newState);
   };
 
@@ -178,7 +240,7 @@ export default class CellularGame extends React.Component {
     this.initAutomaton();
 
     let nextState = this.getStateWindows();
-    nextState.cells = this.automaton.randomMatrix();
+    nextState.cells = this.automaton.randomBoard();
 
     this.setStateWindows(nextState);
   };
@@ -203,6 +265,8 @@ export default class CellularGame extends React.Component {
   /* Cells handling */
 
   resizeCells = (nbR, nbC) => {
+    // Not usefull with Map
+
     // Return the matrix resize
     // Keep as much values as possible
     // Resize on top left corner
@@ -228,27 +292,16 @@ export default class CellularGame extends React.Component {
   clearCells = () => {
     // Set the matrix with 0
     let newState = this.state;
-    const newMatrix = this.emptyCells(newState.core.nbR, newState.core.nbC);
-    newState.windows.cells = newMatrix;
+
+    newState.windows.cells = this.emptyCells();
     this.initAutomaton(); // Clear the previous automaton because dimensions have changed
 
     this.setState(newState);
   };
 
-  emptyCells = (nbRows, nbColumns) => {
-    // Init all the cells at 0 in the matrix
-    let matrix = [];
-    let tmpRow = [];
-
-    for (let r = 0; r < nbRows; r++) {
-      // iterate over the rows and columns of the matrix
-      tmpRow = [];
-      for (let c = 0; c < nbColumns; c++) {
-        tmpRow.push(0); // set value to 0
-      }
-      matrix.push(tmpRow);
-    }
-    return matrix;
+  emptyCells = () => {
+    // Init all the cells at 0 in the board
+    return new Map();
   };
 
   /* Setter of the state */
@@ -263,7 +316,7 @@ export default class CellularGame extends React.Component {
       nextState.core.nbR !== newCore.nbR
     ) {
       // The size of the matrix changed
-      nextState.windows.cells = this.resizeCells(newCore.nbR, newCore.nbC); // Init a new board
+      // nextState.windows.cells = this.resizeCells(newCore.nbR, newCore.nbC); // Init a new board
       callBack = this.initAutomaton; // Clear the previous automaton because dimensions could be differents
     }
 
@@ -324,30 +377,6 @@ export default class CellularGame extends React.Component {
   };
 
   render() {
-    let bob = new Map();
-
-    const k1 = "R2C4";
-    const k2 = "R-2C8";
-
-    const r = -2;
-    const c = 8;
-
-    bob.set(k1, "k1");
-    bob.set(k2, "k2");
-
-    console.log(`R${r}C${c}`);
-    console.log(k2);
-
-    console.log(bob);
-    console.log(bob.get(k1));
-    console.log(bob.get(k2));
-    console.log(bob.get({ x: 0, y: 0 }));
-    console.log(bob.get({ x: 2, y: 3 }));
-    console.log(bob.get("R-2C8"));
-    console.log(bob.get(`R${r}C${c}`));
-
-    console.log("BOB");
-
     return (
       <div>
         <h1>Automate Cellulaire</h1>
@@ -368,6 +397,8 @@ export default class CellularGame extends React.Component {
             set: this.setStateCore
           }}
           changeValueCell={this.changeValueCell}
+          getKeyFromCoordinates={this.getKeyFromCoordinates}
+          getValueCell={this.getValueCell}
         />
 
         <Controls

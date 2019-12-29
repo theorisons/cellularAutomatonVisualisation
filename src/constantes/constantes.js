@@ -29,14 +29,14 @@ export const INIT_CONTROLS = {
 export const INIT_WINDOWS = {
   // Initial state of the windows section
   click: false, // To handle when the user click
-  cells: [] // represent the board. Matrix of int
+  cells: new Map() // represent the board. Map with String has key and int as value
 };
 
 export const INIT_CORE = {
   // Initial state of the core section (ie common to all sections)
-  nbR: 20, // Number of rows
-  nbC: 20, // Number of columns
-  size: 10 // Size of the blocs
+  nbR: 50, // Number of rows
+  nbC: 50, // Number of columns
+  size: 15 // Size of the blocs
 };
 
 export const NB_COLORS = 8; // Number of colors set in the CSS
