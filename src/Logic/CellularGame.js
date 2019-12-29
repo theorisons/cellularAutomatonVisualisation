@@ -225,13 +225,8 @@ export default class CellularGame extends React.Component {
     const value = this.getNewValue(indR, indC); // Change the value of the cell
     const key = this.getKeyFromCoordinates(indR, indC);
 
-    console.log("val " + value);
-    console.log(newState.cells);
-
     newState.cells.delete(key); // remove the previous value (if it is store)
     newState.cells.set(key, value); // store the new value
-
-    console.log(newState.cells);
 
     this.setStateWindows(newState);
   };
@@ -385,6 +380,7 @@ export default class CellularGame extends React.Component {
           <h2>
             Test Resize {this.state.test.w} x {this.state.test.h}
           </h2>
+          <h2>Nombre de cellules: {this.state.windows.cells.size}</h2>
         </div>
 
         <Windows

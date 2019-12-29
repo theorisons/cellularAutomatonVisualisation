@@ -61,6 +61,7 @@ export class Automaton {
     // Compute the next state of the simulation
     let nMap = new Map();
     let cValue; // value of the next state of the cell
+    let cKey; // key to store in the map
 
     this.map.forEach((value, key) => {
       // Iterate over all alive cells
@@ -72,7 +73,10 @@ export class Automaton {
           cValue = this.rules(r, c);
           if (cValue !== 0) {
             // Only store alive cell
-            nMap.set(this.keyFromCoordinates(r, c), cValue);
+            cKey = this.keyFromCoordinates(r, c);
+
+            nMap.delete(cKey); // in case the cell was already visited
+            nMap.set(cKey, cValue);
           }
         }
       }
@@ -135,14 +139,15 @@ export class Automaton {
     // Values to iterate (ie Neighboors)
 
     let compt = 0;
+    let cVal; // We can just look at the map. Because 0 aren't store
 
     // Iterate over the neighboors
     for (let r = indR - 1; r <= indR + 1; r++) {
       for (let c = indC - 1; c <= indC + 1; c++) {
         if (r !== indR || c !== indC) {
           // We don't count the cell itself
-
-          if (this.map.get(this.keyFromCoordinates(r, c)) === vToCheck) {
+          cVal = this.getValue(r, c);
+          if (cVal === vToCheck) {
             // Count the state of the cell
             compt += 1;
           }
