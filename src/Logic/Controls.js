@@ -5,6 +5,7 @@ import {
   BUTTON_COLOR,
   NB_COLORS,
   TYPE_GAME_OF_LIFE,
+  CUSTOM,
   /* Use to display options of the automaton */
   GAME_OF_LIFE,
   COLORED_VARIANT
@@ -16,7 +17,12 @@ export default class Controls extends React.Component {
   displayOptionsFromList(array) {
     // Display the differents options from a list
     // The key of the element are the name of the element
-    return array.map(el => <option key={el}>{el}</option>);
+    return array.map(el => {
+      if (typeof el === "string") {
+        return <option key={el}>{el}</option>;
+      }
+      return <option key={el.name}>{el.name}</option>;
+    });
   }
 
   updateValueSpecific = (event, stateTarget) => {
@@ -55,6 +61,54 @@ export default class Controls extends React.Component {
     this.props.specific.set(nextState);
   };
 
+  updateValuesOptionsRules = (stateTarget, position) => {
+    // update the rule for game of life custom
+    let nextState = { ...this.props.specific.get() }; // Copy of the state
+    // Copy to avoid to mute the state
+    // Used in parent to compare
+    nextState.options = {
+      ...nextState.options,
+      variant: {
+        name: CUSTOM.name,
+        rules: {
+          born: [...nextState.options.variant.rules.born],
+          survive: [...nextState.options.variant.rules.survive]
+        }
+      }
+    };
+
+    nextState.options.variant.rules[stateTarget][position] = !nextState.options
+      .variant.rules[stateTarget][position];
+
+    this.props.specific.set(nextState);
+  };
+
+  updateVariantAutomaton(event) {
+    // update the variant of the automaton
+    let nextState = { ...this.props.specific.get() }; // Copy of the state
+
+    const value = event.target.value;
+
+    for (let i = 0; i < TYPE_GAME_OF_LIFE.length; i++) {
+      if (TYPE_GAME_OF_LIFE[i].name === value) {
+        // Copy to avoid to mute the state
+        // Used in parent to compare
+        nextState.options = {
+          ...nextState.options,
+          variant: {
+            name: TYPE_GAME_OF_LIFE[i].name,
+            rules: {
+              born: [...TYPE_GAME_OF_LIFE[i].rules.born],
+              survive: [...TYPE_GAME_OF_LIFE[i].rules.survive]
+            }
+          }
+        };
+      }
+    }
+
+    this.props.specific.set(nextState);
+  }
+
   playPauseButton = () => {
     let message = "Play";
     const { play } = this.props.specific.get();
@@ -78,10 +132,36 @@ export default class Controls extends React.Component {
       case GAME_OF_LIFE:
         return this.displayOptionsConway();
       case COLORED_VARIANT:
-        return this.displayOptionsImmigration();
+        return this.displayOptionsColoredVariant();
       default:
         break;
     }
+  }
+
+  displayCheckBox(arrayValues, id) {
+    let arrayCheckBoxes = [];
+
+    for (let i = 0; i <= 8; i++) {
+      arrayCheckBoxes.push(
+        <div key={`${id}${i}`} className="custom-control custom-switch">
+          <input
+            type="checkbox"
+            className="custom-control-input"
+            checked={arrayValues[i]}
+            readOnly
+          />
+
+          <label
+            className="custom-control-label"
+            onClick={() => this.updateValuesOptionsRules(id, i)}
+          >
+            {i}
+          </label>
+        </div>
+      );
+    }
+
+    return arrayCheckBoxes;
   }
 
   displayOptionsConway() {
@@ -95,26 +175,38 @@ export default class Controls extends React.Component {
           <label>Variante du Jeu de la Vie</label>
           <select
             className="form-control"
-            value={variant}
-            onChange={event =>
-              this.updateValuesOptionsAutomaton(event, "variant")
-            }
+            value={variant.name}
+            onChange={event => this.updateVariantAutomaton(event)}
           >
             {this.displayOptionsFromList(TYPE_GAME_OF_LIFE)}
           </select>
+        </div>
+
+        <div className="row no-gutters">
+          <div className="col-6">
+            <h4>Cellule nait</h4>
+            {this.displayCheckBox(variant.rules.born, "born")}
+          </div>
+
+          <div className="col-6">
+            <h4>Cellule survit</h4>
+            {this.displayCheckBox(variant.rules.survive, "survive")}
+          </div>
+
+          <h5>Selection du nombre de voisins vivants</h5>
         </div>
       </div>
     );
   }
 
-  displayOptionsImmigration() {
-    // Options for the Immigration game
+  displayOptionsColoredVariant() {
+    // Options for the colored variant
 
     const { nbStates } = this.props.specific.get().options; // all the options of the game
     return (
-      <div id="OptionsImmigration">
+      <div id="OptionsColoredVariant">
         <hr />
-        <h3>Jeu de l'Immigration</h3>
+        <h3>Variante à plusieurs états</h3>
 
         <div className="form-group">
           <label>Nombre d'états: {nbStates}</label>
@@ -142,40 +234,6 @@ export default class Controls extends React.Component {
       <form
         onSubmit={e => e.preventDefault()} // Avoid the submit when click on button
       >
-        <hr />
-        <h3>Gestion de l'automate</h3>
-
-        <div className="row no-gutters justify-content-between align-items-center">
-          <div id="AutomatonSelection" className="form-group col-5">
-            <label>Type d'automate</label>
-            <select
-              className="form-control"
-              value={type}
-              onChange={event => this.updateValueSpecific(event, "type")}
-            >
-              {this.displayOptionsFromList(TYPE_SIMULATION)}
-            </select>
-          </div>
-          <div className="row col-6">
-            <button
-              type="button"
-              className={`btn ${BUTTON_COLOR} mx-${MARGIN_BUTTONS} col`}
-              onClick={() => this.props.clear()}
-            >
-              Vider
-            </button>
-            <button
-              type="button"
-              className={`btn ${BUTTON_COLOR} mx-${MARGIN_BUTTONS} col`}
-              onClick={() => this.props.randomCells()}
-            >
-              Aléatoire
-            </button>
-          </div>
-        </div>
-
-        {this.displayAutomatonOptions()}
-
         <hr />
         <h3>Gestion de l'affichage</h3>
 
@@ -246,6 +304,40 @@ export default class Controls extends React.Component {
             </button>
           </div>
         </div>
+
+        <hr />
+        <h3>Gestion de l'automate</h3>
+
+        <div className="row no-gutters justify-content-between align-items-center">
+          <div id="AutomatonSelection" className="form-group col-5">
+            <label>Type d'automate</label>
+            <select
+              className="form-control"
+              value={type}
+              onChange={event => this.updateValueSpecific(event, "type")}
+            >
+              {this.displayOptionsFromList(TYPE_SIMULATION)}
+            </select>
+          </div>
+          <div className="row col-6">
+            <button
+              type="button"
+              className={`btn ${BUTTON_COLOR} mx-${MARGIN_BUTTONS} col`}
+              onClick={() => this.props.clear()}
+            >
+              Vider
+            </button>
+            <button
+              type="button"
+              className={`btn ${BUTTON_COLOR} mx-${MARGIN_BUTTONS} col`}
+              onClick={() => this.props.randomCells()}
+            >
+              Aléatoire
+            </button>
+          </div>
+        </div>
+
+        {this.displayAutomatonOptions()}
       </form>
     );
   }

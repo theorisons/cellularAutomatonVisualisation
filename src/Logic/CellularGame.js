@@ -106,7 +106,7 @@ export default class CellularGame extends React.Component {
           this.state.windows.cells,
           this.state.core.nbR,
           this.state.core.nbC,
-          this.state.controls.options.variant
+          this.state.controls.options.variant.rules
         );
         break;
       case COLORED_VARIANT:
@@ -234,7 +234,12 @@ export default class CellularGame extends React.Component {
     if (
       nextState.controls.type !== newControls.type ||
       // the value of the automaton changed
-      nextState.controls.options !== newControls.options
+      nextState.controls.options.variant.name !==
+        newControls.options.variant.name ||
+      // the value of the rules changed
+      nextState.controls.options.variant.rules !==
+        newControls.options.variant.rules
+
       // The user change options of the automaton
     ) {
       callBack = this.initAutomaton;

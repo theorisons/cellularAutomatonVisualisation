@@ -5,21 +5,47 @@ export const COLORED_VARIANT = "Variante colorée";
 export const TYPE_SIMULATION = [GAME_OF_LIFE, COLORED_VARIANT]; // All the simulation implemented
 
 // Variant of the game of life
-export const CONWAY = "Conway: Jeu de la Vie";
-export const DAY_NIGHT = "Day & Night";
-export const HIGHLIFE = "HighLife";
+export const CUSTOM = {
+  name: "Personnalisée",
+  rules: {
+    born: [false, false, false, false, false, false, false, false, false],
+    survive: [false, false, false, false, false, false, false, false, false]
+  }
+};
+const CONWAY = {
+  name: "Conway: Jeu de la Vie",
+  rules: {
+    born: [false, false, false, true, false, false, false, false, false],
+    survive: [false, false, true, true, false, false, false, false, false]
+  }
+};
+const DAY_NIGHT = {
+  name: "Day & Night",
+  rules: {
+    born: [false, false, false, true, false, false, true, true, true],
+    survive: [false, false, false, true, true, false, true, true, true]
+  }
+};
+const HIGHLIFE = {
+  name: "HighLife",
+  rules: {
+    born: [false, false, false, true, false, false, true, false, false],
+    survive: [false, false, true, true, false, false, false, false, false]
+  }
+};
 
-export const TYPE_GAME_OF_LIFE = [CONWAY, DAY_NIGHT, HIGHLIFE];
+export const TYPE_GAME_OF_LIFE = [CUSTOM, CONWAY, DAY_NIGHT, HIGHLIFE];
 
 const DEFAULT_SIMULATION = 0; // Number of the default simulation
+const DEFAULT_VARIANT = 1; // Number of the default variant for the game of life
 
 export const INIT_CONTROLS = {
   // Initial state of the controls section
   speed: 500, // Speed of the animation in ms
   type: TYPE_SIMULATION[DEFAULT_SIMULATION], // Type of the simulation (ie automaton)
   options: {
-    // Use for game of lige
-    variant: TYPE_GAME_OF_LIFE[0],
+    // Use for game of life
+    variant: { ...TYPE_GAME_OF_LIFE[DEFAULT_VARIANT] },
     // Use for Colored Life
     nbStates: 3
   }, // Options specific to the automaton
