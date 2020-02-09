@@ -24,7 +24,7 @@ export const getCoordinatesFromKey = key => {
     indC = indC + key[i];
   }
 
-  //Conver the strig value into integer
+  //Convert the string value into integer
   indR = parseInt(indR, 10);
   indC = parseInt(indC, 10);
 

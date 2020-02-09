@@ -8,7 +8,6 @@ import Windows from "../Display/Windows";
 /* Automaton */
 
 import { GameOfLife } from "./Algo/GameOfLife";
-import { ColoredVariant } from "./Algo/ColoredVariant";
 
 /* Constantes */
 
@@ -16,10 +15,7 @@ import {
   /* Use for the state */
   INIT_CONTROLS,
   INIT_CORE,
-  INIT_WINDOWS,
-  /* Use for the init of the automaton */
-  GAME_OF_LIFE,
-  COLORED_VARIANT
+  INIT_WINDOWS
 } from "../constantes/constantes";
 import { getKeyFromCoordinates } from "../constantes/utilities";
 
@@ -100,32 +96,12 @@ export default class CellularGame extends React.Component {
     // Init the automaton
     // Init once even if the matrix change
     // The matrix use by the Automaton is a reference to the cells in the state
-    switch (this.state.controls.type) {
-      case GAME_OF_LIFE:
-        this.automaton = new GameOfLife(
-          this.state.windows.cells,
-          this.state.core.nbR,
-          this.state.core.nbC,
-          this.state.controls.options.variant.rules
-        );
-        break;
-      case COLORED_VARIANT:
-        this.automaton = new ColoredVariant(
-          this.state.windows.cells,
-          this.state.core.nbR,
-          this.state.core.nbC,
-          this.state.controls.options.nbStates
-        );
-        break;
-      default:
-        console.error("Error in the Automaton selection");
-        break;
-    }
-
-    // Check if the current board can be use for the current automaton
-    if (!this.automaton.checkCells()) {
-      this.clearCells();
-    }
+    this.automaton = new GameOfLife(
+      this.state.windows.cells,
+      this.state.core.nbR,
+      this.state.core.nbC,
+      this.state.controls.variant.rules
+    );
   };
 
   stepAutomaton = () => {
@@ -174,7 +150,7 @@ export default class CellularGame extends React.Component {
     let newState = this.state;
 
     newState.windows.cells = this.emptyCells();
-    this.initAutomaton(); // Clear the previous automaton because dimensions have changed
+    this.initAutomaton();
 
     this.setState(newState);
   };
@@ -185,8 +161,6 @@ export default class CellularGame extends React.Component {
   };
 
   randomCells = () => {
-    this.initAutomaton();
-
     let nextState = this.getStateWindows();
     nextState.cells = this.automaton.randomBoard();
 
@@ -232,14 +206,9 @@ export default class CellularGame extends React.Component {
     }
 
     if (
-      nextState.controls.type !== newControls.type ||
-      // the value of the automaton changed
-      nextState.controls.options.variant.name !==
-        newControls.options.variant.name ||
+      nextState.controls.variant.name !== newControls.variant.name ||
       // the value of the rules changed
-      nextState.controls.options.variant.rules !==
-        newControls.options.variant.rules
-
+      nextState.controls.variant.rules !== newControls.variant.rules
       // The user change options of the automaton
     ) {
       callBack = this.initAutomaton;

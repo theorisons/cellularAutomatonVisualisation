@@ -81,31 +81,6 @@ export class Automaton {
     return nMap;
   }
 
-  checkCells() {
-    // Iterate over the value of the cells
-    // Return a boolean
-    // true => the board is correct according to the automaton
-    // false => incorrect
-
-    let values = this.map.values(); // Map iterator that contain value
-
-    for (let s = 0; s < this.map.size; s++) {
-      // Iterate over the value of the cells
-      if (!this.checkValue(values.next().value)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  checkValue(value) {
-    // Check if the value can be used in the automaton
-    // Return a boolean
-
-    return 0 <= value && value < this.nbStates;
-  }
-
   rules(indR, indC) {
     // (indC, indR) are the coordinates of the cell
     // indR -> value of the row
