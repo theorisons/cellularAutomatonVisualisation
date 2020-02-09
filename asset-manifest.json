@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/cellularAutomatonVisualisation/static/css/main.a0b6cbc8.chunk.css",
-    "main.js": "/cellularAutomatonVisualisation/static/js/main.78c25818.chunk.js",
-    "main.js.map": "/cellularAutomatonVisualisation/static/js/main.78c25818.chunk.js.map",
+    "main.css": "/cellularAutomatonVisualisation/static/css/main.838c8082.chunk.css",
+    "main.js": "/cellularAutomatonVisualisation/static/js/main.ed5920ba.chunk.js",
+    "main.js.map": "/cellularAutomatonVisualisation/static/js/main.ed5920ba.chunk.js.map",
     "runtime-main.js": "/cellularAutomatonVisualisation/static/js/runtime-main.31b6051a.js",
     "runtime-main.js.map": "/cellularAutomatonVisualisation/static/js/runtime-main.31b6051a.js.map",
-    "static/js/2.937844ca.chunk.js": "/cellularAutomatonVisualisation/static/js/2.937844ca.chunk.js",
-    "static/js/2.937844ca.chunk.js.map": "/cellularAutomatonVisualisation/static/js/2.937844ca.chunk.js.map",
+    "static/js/2.664d4757.chunk.js": "/cellularAutomatonVisualisation/static/js/2.664d4757.chunk.js",
+    "static/js/2.664d4757.chunk.js.map": "/cellularAutomatonVisualisation/static/js/2.664d4757.chunk.js.map",
     "index.html": "/cellularAutomatonVisualisation/index.html",
-    "precache-manifest.4968d01ba47aa436612d61b9d0edee11.js": "/cellularAutomatonVisualisation/precache-manifest.4968d01ba47aa436612d61b9d0edee11.js",
+    "precache-manifest.e4aa633d54ebce20169024b8654acf62.js": "/cellularAutomatonVisualisation/precache-manifest.e4aa633d54ebce20169024b8654acf62.js",
     "service-worker.js": "/cellularAutomatonVisualisation/service-worker.js",
-    "static/css/main.a0b6cbc8.chunk.css.map": "/cellularAutomatonVisualisation/static/css/main.a0b6cbc8.chunk.css.map",
-    "static/js/2.937844ca.chunk.js.LICENSE": "/cellularAutomatonVisualisation/static/js/2.937844ca.chunk.js.LICENSE"
+    "static/css/main.838c8082.chunk.css.map": "/cellularAutomatonVisualisation/static/css/main.838c8082.chunk.css.map",
+    "static/js/2.664d4757.chunk.js.LICENSE": "/cellularAutomatonVisualisation/static/js/2.664d4757.chunk.js.LICENSE"
   },
   "entrypoints": [
     "static/js/runtime-main.31b6051a.js",
-    "static/js/2.937844ca.chunk.js",
-    "static/css/main.a0b6cbc8.chunk.css",
-    "static/js/main.78c25818.chunk.js"
+    "static/js/2.664d4757.chunk.js",
+    "static/css/main.838c8082.chunk.css",
+    "static/js/main.ed5920ba.chunk.js"
   ]
 }
