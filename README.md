@@ -1,7 +1,7 @@
 # Simulation d'Automate Cellulaire
 
 ## Présentation
-Code du visualisateur d'automate cellulaire présenté dans la video **[Titre](url_du_lien "Voir la vidéo")**.
+Code du visualisateur d'automate cellulaire présenté dans la video **[Automates Cellulaires | Jeu de la Vie | Structures de Données](https://youtu.be/uqTgQ07sDF8 "Voir la vidéo")**.
 
 
 ## Version web en ReactJs
