@@ -138,7 +138,11 @@ export default class CellularGame extends React.Component {
     const key = getKeyFromCoordinates(indR, indC);
 
     newState.cells.delete(key); // remove the previous value (if it is store)
-    newState.cells.set(key, value); // store the new value
+
+    if (value !== 0) {
+      // Don't store dead cell
+      newState.cells.set(key, value); // store the new value
+    }
 
     this.setStateWindows(newState);
   };
